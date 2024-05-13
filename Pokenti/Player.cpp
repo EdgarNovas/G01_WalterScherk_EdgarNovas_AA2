@@ -26,7 +26,11 @@ char Player::GetDir() {
 	return this->direction;
 }
 
-void Player::CapturePokemon()
+void Player::CapturePokemon(int a)
 {
-	capturedPokemon++;
+	capturedPokemon += a;
+}
+
+int Player::ShowCapturedPokemon() {
+	return this->capturedPokemon;
 }
