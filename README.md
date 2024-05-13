@@ -1,1 +1,0 @@
-# G01_WalterScherk_EdgarNovas_AA2
