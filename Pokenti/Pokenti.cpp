@@ -319,11 +319,12 @@ int main()
     }
     
     //We delete map from stack
-    for (int i = 0; i < MAX_MAP; i++) {
+    for (int i = 0; i < height; i++) {
         delete [] map[i];
     }
 
     delete[] map;
+    
 
    
 }
