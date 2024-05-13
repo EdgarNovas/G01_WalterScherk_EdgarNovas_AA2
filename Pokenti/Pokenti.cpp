@@ -4,7 +4,8 @@
 #include <string>
 #include <Windows.h>
 #include "Player.h"
-#include <algorithm>
+
+
 const int MAX_MAP = 3;
 
 //char** map = new char*[MAX_MAP];
@@ -20,13 +21,29 @@ struct Pokemon
 };
 
 
-void PutPlayer(int& i, Player& me, int width, char *map[]) {
+void PutPlayer(Player& me, int width, char *map[]) {
 
-    for (int j = 0; j < width; j++) {
-        if (j == me.GetY())
-            std::cout << me.GetDir();
-    }
+    std::cout << me.GetDir();
 }
+
+
+
+bool PutPokemon(Pokemon pokemons[], int& allPokemonAround, int& posX, int& posY) {
+    
+    for (int a = 0; a < allPokemonAround; a++) {
+
+
+        if (pokemons[a].posX == posX && pokemons[a].posY == posY) {
+                
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+
 
 void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumber) {
 
@@ -50,62 +67,33 @@ void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumb
     }
 }
 
-int GetCameraX(Player me, int height) {
-    if (me.GetX() <= 5) {
-        return 0;
-    }
-    else if (me.GetX() >= height - 5) {
-        return height - 5;
-    }
-    else
+int CheckForPokemon(Pokemon pokemons[], int& group1, int& group2, int targetPosX, int targetPosY, int& width, int& height) {
+
+    for (int i = 0; i < group1 + group2; i++)
     {
-        return me.GetX()-5;
-    }
-}
+        if (targetPosX == pokemons[i].posX)
+        {
+            if (targetPosY == pokemons[i].posY)
+            {
+                if (i < group1) {
+                    pokemons[i].posX = rand() % ((width / 2) - 1);
+                    pokemons[i].posY = rand() % ((height / 2) - 1);
+                }
+                else if (i >= group1) {
+                    pokemons[i].posX = rand() % ((width / 2) - 1);
+                    pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
+                }
 
-
-int GetCameraY(Player me, int width) {
-
-    if (me.GetY() <= 5) {
-        return 0;
-    }
-    else if (me.GetY() >= width - 5) {
-        return width - 5;
-    }
-    else
-    {
-        return me.GetY()-5;
-    }
-
-    /*
-    
-
-        
-    
-    */
-
-}
-
-/*
-void mostrarVista(char** mapa, int x, int y, int anchoVista, int altoVista,int width, int height) {
-    // Calcular los límites de la vista
-    int minX = (x - anchoVista / 2 > 0) ? x - anchoVista / 2 : 0;
-    int minY = (y - altoVista / 2 > 0) ? y - altoVista / 2 : 0;
-    int maxX = (x + anchoVista / 2 < width) ? x + anchoVista / 2 : width;
-    int maxY = (y + altoVista / 2 < height) ? y + altoVista / 2 : height;
-
-    // Mostrar la vista
-    for (int i = minY; i < maxY; ++i) {
-        for (int j = minX; j < maxX; ++j) {
-            if (i == x && j == y)
-                std::cout << "P";
-            else
-                std::cout << mapa[j][i] << " ";
+                return 1;
+            }
         }
-        std::cout << std::endl;
     }
+
+    return 0;
 }
-*/
+
+
+
 
 int main()
 {
@@ -117,9 +105,13 @@ int main()
     int pokemonAround2 = 0;
     int pokemonNeeded2 = 0;
 
+    
+
+    
+
+
 
     std::string linea;
-    
     
     
     int width = 0;
@@ -141,9 +133,6 @@ int main()
             else if (_i == 2) // obtener el numero de los pokemon de la segunda zona
                 CheckNumbers(linea, pokemonAround2, pokemonNeeded2, leftNumber);
             
-                
-
-            
             _i++;
         }
     }
@@ -153,10 +142,24 @@ int main()
 
     archivo.close();
 
+    int allPokemonAround = pokemonAround1 + pokemonAround2;
 
-    std::cout << width << ' ' << height << std::endl << std::endl;
-    std::cout << pokemonAround1 << ' ' << pokemonNeeded1 << std::endl << std::endl;
-    std::cout << pokemonAround2 << ' ' << pokemonNeeded2 << std::endl << std::endl;
+    Pokemon* pokemons = new Pokemon[allPokemonAround];
+
+    srand(time(NULL));
+
+    for (int i = 0; i < pokemonAround1; i++)
+    {
+        pokemons[i].posX = rand() % ((width / 2) -1);
+        pokemons[i].posY = rand() % ((height / 2) -1);
+    }
+    for (int i = pokemonAround1; i < pokemonAround1 + pokemonAround2; i++)
+    {
+        pokemons[i].posX = rand() % ((width / 2) - 1);
+        pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
+        std::cout << pokemons[i].posX << ' ' << pokemons[i].posY << std::endl; 
+    }
+
 
     // DEFINE SIZE OF MAP
     map = new char*[height]; //!!!!!!!!!!!!!!!!!!!width (izquierda a derecha) y height(arriba a abajo)
@@ -170,105 +173,154 @@ int main()
     {
         for (int j = 0; j < width; j++)
         {
-            map[i][j] = '-';
+
+            if (i == width / 2 && j <= height / 2) {
+                map[i][j] = 'X';
+            }
+            else if (i >= width / 2 && j == height / 2) {
+                map[i][j] = 'X';
+            }
+            else if (i == width / 2 && j >= height / 2) {
+                map[i][j] = 'X';
+            }
+            else if (i <= width / 2 && j == height / 2) {
+                map[i][j] = 'X';
+            }
+            else
+                map[i][j] = '-';
         }
     }
 
 
-    char dir = '-';
 
-    while (dir != 'q') {
+    while (!GetAsyncKeyState(VK_ESCAPE)) {
 
         system("cls");
 
-        switch (dir)
-        {
-        case 'd':
+        if (GetAsyncKeyState(VK_RIGHT)) {
+
             me.SetDirection('>');
-            
-            if (me.GetY() + 1 <= width)
+
+            if (me.GetY() + 1 <= width -1 && map[me.GetY() + 1][me.GetX()] == '-')
                 me.SetPosition(me.GetX(), me.GetY() + 1);
-            
-            break;
+        }
+        else if (GetAsyncKeyState(VK_LEFT)) {
 
-        case 'a':
             me.SetDirection('<');
-            
-            if (me.GetY() - 1 >= 0)
+
+            if (me.GetY() - 1 >= 0 && map[me.GetY() - 1][me.GetX()] == '-')
                 me.SetPosition(me.GetX(), me.GetY() - 1);
+        }
+        else if (GetAsyncKeyState(VK_DOWN)) {
 
-            break;
-
-        case 's':
             me.SetDirection('v');
-            
-            if (me.GetX() + 1 <= height)
+
+            if (me.GetX() + 1 <= height -1 && map[me.GetY()][me.GetX() + 1] == '-')
                 me.SetPosition(me.GetX() + 1, me.GetY());
+        }
+        else if (GetAsyncKeyState(VK_UP)) {
 
-            break;
-
-        case 'w':
             me.SetDirection('^');
-            
-            if (me.GetX() - 1 >= 0)
+
+            if (me.GetX() - 1 >= 0 && map[me.GetY()][me.GetX() - 1] == '-')
                 me.SetPosition(me.GetX() - 1, me.GetY());
-
-            break;
-
-        default:
-            break;
         }
+            
 
-        //
-        
-        //mostrarVista(map, me.GetX(), me.GetY(), 5, 5, width, height);
-        //GET ALL CHARS from array TO 0
-        
-        //NOW I HAVE TO GET THE CENTER OF THE PLAYER IF POSSIBLE GETX -5 AND GETY -5 FOR EXAMPLE
-        
-        //
+            
+        else if (GetAsyncKeyState(VK_SPACE)) {
 
-        int getCamPosX = GetCameraX(me, height);
-        int getCamPosY = GetCameraY(me, width);
+            if (me.GetDir() == '<')
+                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() - 1, width, height));
+            else if (me.GetDir() == '>')
+                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() + 1, width, height));
+            else if (me.GetDir() == '^')
+                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() - 1, me.GetY(), width, height));
+            else if (me.GetDir() == 'v')
+                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() + 1, me.GetY(), width, height));
 
-
-        //DrawMap
-        for (int i = getCamPosX; i < getCamPosX+10 ; i++) {
-
-                for (int j = getCamPosY; j < getCamPosY+10; j++) {
-                   
-                        //j >= me.GetY() - 5 - (width - me.GetY())  
-                        if (i == me.GetX() && j == me.GetY())
-                            PutPlayer(i, me, width, map);
-                        else {
-                            std::cout << map[i][j];
+            if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
+                for (int i = 0; i < height; i++)
+                {
+                    for (int j = 0; j < width; j++)
+                    {
+                        if (i > width / 2 && j == height / 2) {
+                            map[i][j] = '-';
                         }
-
-                        
-                    
+                    }
                 }
-                
+            }
+            else if (me.ShowCapturedPokemon() >= pokemonNeeded1) {
+                for (int i = 0; i < height; i++)
+                {
+                    for (int j = 0; j < width; j++)
+                    {
+                        if (i == width / 2 && j < height / 2) {
+                            map[i][j] = '-';
+                        }
+                    }
+                }
+            }
 
-                std::cout << std::endl;
-           
-
-            
-            
-            
         }
-        std::cout << me.GetX() << GetCameraX(me,height);
-        std::cin >> dir;
 
-        Sleep(25);
+        
+
+        //GET ALL CHARS from array TO 0
+
+        int lowerX = me.GetX() - 5;
+        int higherX = me.GetX() + 5;
+        int lowerY = me.GetY() - 5;
+        int higherY = me.GetY() + 5;
+
+        lowerX < 0 ?
+            higherX += abs(lowerX), lowerX = 0
+            :
+            0;
+        higherX > width ?
+            lowerX -= higherX - width, higherX = width
+            :
+            0;
+
+        lowerY < 0 ?
+            higherY += abs(lowerY), lowerY = 0
+            :
+            0;
+        higherY > height ?
+            lowerY -= higherY - height, higherY = height
+            :
+            0;
+
+        for (int i = lowerX; i < higherX; i++) {
+
+
+            for (int j = lowerY; j < higherY; j++) {
+                //j >= me.GetY() - 5 - (width - me.GetY())  
+                if (i == me.GetX() && j == me.GetY())
+                    PutPlayer(me, width, map);
+                else if (PutPokemon(pokemons, allPokemonAround, i, j))
+                    std::cout << 'P';
+                else
+                    std::cout << map[j][i];
+
+                if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() < pokemonNeeded1)
+                    std::cout << "          " <<
+                    me.ShowCapturedPokemon() << '/' << pokemonNeeded1 << " pokemon";
+                else if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() >= pokemonNeeded1)
+                    std::cout << "          " <<
+                    me.ShowCapturedPokemon() << '/' << pokemonNeeded2 << " pokemon";
+            }
+
+
+            std::cout << std::endl;
+        }
+
+        Sleep(300);
     }
     
-
-        
-
-
     //We delete map from stack
     for (int i = 0; i < MAX_MAP; i++) {
-        delete[] map[i];
+        delete [] map[i];
     }
 
     delete[] map;

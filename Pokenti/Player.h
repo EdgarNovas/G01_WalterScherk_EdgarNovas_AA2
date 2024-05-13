@@ -18,9 +18,9 @@ public:
 
 	char GetDir();
 
-	void CapturePokemon();
+	void CapturePokemon(int a);
 
-
+	int ShowCapturedPokemon();
 
 
 };
