@@ -1,6 +1,0 @@
-﻿  Player.cpp
-  Pokenti.cpp
-D:\ENTI\Programación\GITPOKENTI\G01_WalterScherk_EdgarNovas_AA2\Pokenti\Pokenti.cpp(149,15): warning C4244: 'argumento': conversión de 'time_t' a 'unsigned int'; posible pérdida de datos
-  Generando código...
-  LINK : no se encontró D:\ENTI\Programación\GITPOKENTI\G01_WalterScherk_EdgarNovas_AA2\x64\Debug\Pokenti.exe o no lo generó el último vínculo incremental; ejecutando vínculo completo
-  Pokenti.vcxproj -> D:\ENTI\Programación\GITPOKENTI\G01_WalterScherk_EdgarNovas_AA2\x64\Debug\Pokenti.exe

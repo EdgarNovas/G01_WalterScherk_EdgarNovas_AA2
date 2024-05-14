@@ -4,7 +4,7 @@
 #include <string>
 #include <Windows.h>
 #include "Player.h"
-
+#include "GameStates.h"
 
 const int MAX_MAP = 3;
 
