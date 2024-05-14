@@ -1,23 +1,32 @@
 #pragma once
+
+enum class CurrentGameState
+{
+	Init, Menu, Game, GameOver
+};
+
+
+
+
 class GameStates
 {
 private:
-	enum class CurrentGameState
-	{
-		Init,Menu,Game,GameOver
-	};
-
+	
 	CurrentGameState currentState;
+public:
 
 	GameStates() {
 		currentState = CurrentGameState::Init;
 	}
 
-public:
-
 	void ChangeCurrentState(CurrentGameState state) {
 
 		currentState = state;
 	}
+
+	CurrentGameState ReturnGameState() {
+		return currentState;
+	}
+
 };
 

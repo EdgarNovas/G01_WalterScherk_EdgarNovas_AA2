@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "GameStates.h"
 
+
 const int MAX_MAP = 3;
 
 //char** map = new char*[MAX_MAP];
@@ -99,7 +100,33 @@ int main()
 {
     Player me;
     char** map;
-    
+    GameStates state;
+
+    switch (state.ReturnGameState())
+    {
+    case CurrentGameState::Init :
+        
+        
+        break;
+
+    case CurrentGameState::Menu:
+
+        break;
+
+
+    case CurrentGameState::Game :
+        
+        break;
+
+    case CurrentGameState::GameOver:
+
+        break;
+
+
+    default:
+        break;
+    }
+
     int pokemonAround1 = 0;
     int pokemonNeeded1 = 0;
     int pokemonAround2 = 0;
