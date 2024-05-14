@@ -1,6 +1,14 @@
 #include "Player.h"
 
 
+Player::Player() {
+	this->x = 0;
+	this->y = 0;
+	this->direction = '>';
+	this->capturedPokemon = 0;
+	this->pokeballs = 0;
+}
+
 void Player::SetPosition(int _x, int _y)
 {
 	this->x = _x;
@@ -28,7 +36,16 @@ char Player::GetDir() {
 
 void Player::CapturePokemon(int a)
 {
-	capturedPokemon += a;
+	this->capturedPokemon += a;
+	this->pokeballs--;
+}
+
+void Player::IncreasePokeballs() {
+	this->pokeballs++;
+}
+
+int Player::GetPokeballs() {
+	return this->pokeballs;
 }
 
 int Player::ShowCapturedPokemon() {

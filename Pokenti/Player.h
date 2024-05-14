@@ -2,12 +2,15 @@
 class Player
 {
 private:
-	int x = 0;
-	int y = 0;
-	char direction = '>';
-	int capturedPokemon = 0;
+	int x;
+	int y;
+	char direction;
+	int capturedPokemon;
+	int pokeballs;
 
 public:
+	Player();
+
 	void SetPosition(int _x, int _y);
 
 	int GetX();
@@ -19,6 +22,10 @@ public:
 	char GetDir();
 
 	void CapturePokemon(int a);
+
+	void IncreasePokeballs();
+
+	int GetPokeballs();
 
 	int ShowCapturedPokemon();
 

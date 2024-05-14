@@ -21,6 +21,10 @@ struct Pokemon
     int posY;
 };
 
+struct Pokeball {
+    int posX = 2;
+    int posY = 2;
+};
 
 void PutPlayer(Player& me, int width, char *map[]) {
 
@@ -43,8 +47,19 @@ bool PutPokemon(Pokemon pokemons[], int& allPokemonAround, int& posX, int& posY)
     return false;
 }
 
+bool PutPokeball(Pokeball pokeballs[], int& allPokeballAround, int& posX, int& posY) {
+
+    for (int a = 0; a < allPokeballAround; a++) {
 
 
+        if (pokeballs[a].posX == posX && pokeballs[a].posY == posY) {
+
+            return true;
+        }
+    }
+
+    return false;
+}
 
 void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumber) {
 
@@ -132,8 +147,12 @@ int main()
     int pokemonAround2 = 0;
     int pokemonNeeded2 = 0;
 
-    
-
+    int maxPokeballs = 12;
+    Pokeball *pokeballs = new Pokeball[maxPokeballs];
+    /*for (int i = 0; i < maxPokeballs; i++)
+    {
+        pokeballs[i] = new Pokeball;
+    }*/
     
 
 
@@ -183,8 +202,7 @@ int main()
     for (int i = pokemonAround1; i < pokemonAround1 + pokemonAround2; i++)
     {
         pokemons[i].posX = rand() % ((width / 2) - 1);
-        pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-        std::cout << pokemons[i].posX << ' ' << pokemons[i].posY << std::endl; 
+        pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1)); 
     }
 
 
@@ -252,46 +270,69 @@ int main()
             if (me.GetX() - 1 >= 0 && map[me.GetY()][me.GetX() - 1] == '-')
                 me.SetPosition(me.GetX() - 1, me.GetY());
         }
-            
-
-            
+        //hacer una función para las teclas de movimiento
+        //poner return 1   
+        // si es return 1, comprovar todas las pokeball
         else if (GetAsyncKeyState(VK_SPACE)) {
+            if (me.GetPokeballs() > 0) {
+                if (me.GetDir() == '<')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() - 1, width, height));
+                else if (me.GetDir() == '>')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() + 1, width, height));
+                else if (me.GetDir() == '^')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() - 1, me.GetY(), width, height));
+                else if (me.GetDir() == 'v')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() + 1, me.GetY(), width, height));
 
-            if (me.GetDir() == '<')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() - 1, width, height));
-            else if (me.GetDir() == '>')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() + 1, width, height));
-            else if (me.GetDir() == '^')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() - 1, me.GetY(), width, height));
-            else if (me.GetDir() == 'v')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() + 1, me.GetY(), width, height));
-
-            if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
-                for (int i = 0; i < height; i++)
-                {
-                    for (int j = 0; j < width; j++)
+                if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
+                    for (int i = 0; i < height; i++)
                     {
-                        if (i > width / 2 && j == height / 2) {
-                            map[i][j] = '-';
+                        for (int j = 0; j < width; j++)
+                        {
+                            if (i > width / 2 && j == height / 2) {
+                                map[i][j] = '-';
+                            }
+                        }
+                    }
+                }
+                else if (me.ShowCapturedPokemon() >= pokemonNeeded1) {
+                    for (int i = 0; i < height; i++)
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            if (i == width / 2 && j < height / 2) {
+                                map[i][j] = '-';
+                            }
                         }
                     }
                 }
             }
-            else if (me.ShowCapturedPokemon() >= pokemonNeeded1) {
-                for (int i = 0; i < height; i++)
-                {
-                    for (int j = 0; j < width; j++)
-                    {
-                        if (i == width / 2 && j < height / 2) {
-                            map[i][j] = '-';
-                        }
-                    }
-                }
-            }
+            
 
         }
 
-        
+        for (int i = 0; i < maxPokeballs; i++) {
+            if (me.GetX() == pokeballs[i].posX && me.GetY() == pokeballs[i].posY) {
+                me.IncreasePokeballs();
+
+                if (i < maxPokeballs / 4) {
+                    pokeballs[i].posX = rand() % ((width / 2) - 1);
+                    pokeballs[i].posY = rand() % ((height / 2) - 1);
+                }
+                else if (i < maxPokeballs / 2) {
+                    pokeballs[i].posX = rand() % ((width / 2) - 1);
+                    pokeballs[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
+                }
+                else if (i < (maxPokeballs / 4) * 3) {
+                    pokeballs[i].posX = ((width / 2) + 1) + (rand() % ((width / 2) - 1));
+                    pokeballs[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
+                }
+                else {
+                    pokeballs[i].posX = ((width / 2) + 1) + (rand() % ((width / 2) - 1));
+                    pokeballs[i].posY = rand() % ((height / 2) - 1);
+                }
+            }
+        }
 
         //GET ALL CHARS from array TO 0
 
@@ -327,6 +368,8 @@ int main()
                     PutPlayer(me, width, map);
                 else if (PutPokemon(pokemons, allPokemonAround, i, j))
                     std::cout << 'P';
+                else if (PutPokeball(pokeballs, maxPokeballs, i, j))
+                    std::cout << 'O';
                 else
                     std::cout << map[j][i];
 
