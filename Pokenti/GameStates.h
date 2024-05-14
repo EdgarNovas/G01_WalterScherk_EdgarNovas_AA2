@@ -16,6 +16,7 @@ private:
 public:
 
 	void ChangeCurrentState(CurrentGameState state) {
+
 		currentState = state;
 	}
 };
