@@ -4,6 +4,7 @@
 #include <string>
 #include <Windows.h>
 #include "Player.h"
+#include "GameStates.h"
 
 
 const int MAX_MAP = 3;
@@ -99,7 +100,33 @@ int main()
 {
     Player me;
     char** map;
-    
+    GameStates state;
+
+    switch (state.ReturnGameState())
+    {
+    case CurrentGameState::Init :
+        
+        
+        break;
+
+    case CurrentGameState::Menu:
+
+        break;
+
+
+    case CurrentGameState::Game :
+        
+        break;
+
+    case CurrentGameState::GameOver:
+
+        break;
+
+
+    default:
+        break;
+    }
+
     int pokemonAround1 = 0;
     int pokemonNeeded1 = 0;
     int pokemonAround2 = 0;
@@ -319,11 +346,12 @@ int main()
     }
     
     //We delete map from stack
-    for (int i = 0; i < MAX_MAP; i++) {
+    for (int i = 0; i < height; i++) {
         delete [] map[i];
     }
 
     delete[] map;
+    
 
    
 }
