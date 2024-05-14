@@ -247,43 +247,47 @@ int main()
         //poner return 1   
         // si es return 1, comprovar todas las pokeball
         else if (GetAsyncKeyState(VK_SPACE)) {
+            if (me.GetPokeballs() > 0) {
+                if (me.GetDir() == '<')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() - 1, width, height));
+                else if (me.GetDir() == '>')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() + 1, width, height));
+                else if (me.GetDir() == '^')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() - 1, me.GetY(), width, height));
+                else if (me.GetDir() == 'v')
+                    me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() + 1, me.GetY(), width, height));
 
-            if (me.GetDir() == '<')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() - 1, width, height));
-            else if (me.GetDir() == '>')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX(), me.GetY() + 1, width, height));
-            else if (me.GetDir() == '^')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() - 1, me.GetY(), width, height));
-            else if (me.GetDir() == 'v')
-                me.CapturePokemon(CheckForPokemon(pokemons, pokemonAround1, pokemonAround2, me.GetX() + 1, me.GetY(), width, height));
-
-            if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
-                for (int i = 0; i < height; i++)
-                {
-                    for (int j = 0; j < width; j++)
+                if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
+                    for (int i = 0; i < height; i++)
                     {
-                        if (i > width / 2 && j == height / 2) {
-                            map[i][j] = '-';
+                        for (int j = 0; j < width; j++)
+                        {
+                            if (i > width / 2 && j == height / 2) {
+                                map[i][j] = '-';
+                            }
+                        }
+                    }
+                }
+                else if (me.ShowCapturedPokemon() >= pokemonNeeded1) {
+                    for (int i = 0; i < height; i++)
+                    {
+                        for (int j = 0; j < width; j++)
+                        {
+                            if (i == width / 2 && j < height / 2) {
+                                map[i][j] = '-';
+                            }
                         }
                     }
                 }
             }
-            else if (me.ShowCapturedPokemon() >= pokemonNeeded1) {
-                for (int i = 0; i < height; i++)
-                {
-                    for (int j = 0; j < width; j++)
-                    {
-                        if (i == width / 2 && j < height / 2) {
-                            map[i][j] = '-';
-                        }
-                    }
-                }
-            }
+            
 
         }
 
         for (int i = 0; i < maxPokeballs; i++) {
             if (me.GetX() == pokeballs[i].posX && me.GetY() == pokeballs[i].posY) {
+                me.IncreasePokeballs();
+
                 if (i < maxPokeballs / 4) {
                     pokeballs[i].posX = rand() % ((width / 2) - 1);
                     pokeballs[i].posY = rand() % ((height / 2) - 1);
