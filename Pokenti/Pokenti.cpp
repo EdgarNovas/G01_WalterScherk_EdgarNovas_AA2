@@ -26,14 +26,14 @@ struct Pokeball {
     int posY = 2;
 };
 
-void PutPlayer(Player& me, int width, char *map[]) {
+void PutPlayer(Player& me, int width, char **map) {
 
     std::cout << me.GetDir();
 }
 
 
 
-bool PutPokemon(Pokemon pokemons[], int& allPokemonAround, int& posX, int& posY) {
+bool PutPokemon(Pokemon* pokemons, int& allPokemonAround, int& posX, int& posY) {
     
     for (int a = 0; a < allPokemonAround; a++) {
 
@@ -47,7 +47,7 @@ bool PutPokemon(Pokemon pokemons[], int& allPokemonAround, int& posX, int& posY)
     return false;
 }
 
-bool PutPokeball(Pokeball pokeballs[], int& allPokeballAround, int& posX, int& posY) {
+bool PutPokeball(Pokeball* pokeballs, int& allPokeballAround, int& posX, int& posY) {
 
     for (int a = 0; a < allPokeballAround; a++) {
 
@@ -83,7 +83,7 @@ void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumb
     }
 }
 
-int CheckForPokemon(Pokemon pokemons[], int& group1, int& group2, int targetPosX, int targetPosY, int& width, int& height) {
+int CheckForPokemon(Pokemon* pokemons, int& group1, int& group2, int targetPosX, int targetPosY, int& width, int& height) {
 
     for (int i = 0; i < group1 + group2; i++)
     {
@@ -359,6 +359,18 @@ int main()
             :
             0;
 
+        HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+        SetConsoleTextAttribute(hConsole, 12);
+        std::cout << "Pokémons capturados:";
+        SetConsoleTextAttribute(hConsole, 10);
+        std::cout << me.ShowCapturedPokemon() << '/' << pokemonNeeded1;
+
+        SetConsoleTextAttribute(hConsole, 12);
+        std::cout << "   Pokeballs:";
+        SetConsoleTextAttribute(hConsole, 10);
+        std::cout << me.GetPokeballs() << std::endl;
+
+        SetConsoleTextAttribute(hConsole, 7);
         for (int i = lowerX; i < higherX; i++) {
 
 
@@ -373,12 +385,12 @@ int main()
                 else
                     std::cout << map[j][i];
 
-                if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() < pokemonNeeded1)
+                /*if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() < pokemonNeeded1)
                     std::cout << "          " <<
                     me.ShowCapturedPokemon() << '/' << pokemonNeeded1 << " pokemon";
                 else if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() >= pokemonNeeded1)
                     std::cout << "          " <<
-                    me.ShowCapturedPokemon() << '/' << pokemonNeeded2 << " pokemon";
+                    me.ShowCapturedPokemon() << '/' << pokemonNeeded2 << " pokemon";*/
             }
 
 
