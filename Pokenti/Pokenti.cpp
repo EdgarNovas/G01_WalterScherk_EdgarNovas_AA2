@@ -5,36 +5,31 @@
 #include <Windows.h>
 #include "Player.h"
 #include "GameStates.h"
-
+#include "Pokemon.h"
 
 const int MAX_MAP = 3;
 const int CHAR_NUM_TO_NUM = 48;
 const int POKE_COMBAT_AREA_MIN = -1;
 const int POKE_COMBAT_AREA_MAX = 2;
 
-//char** map = new char*[MAX_MAP];
+const int MILLIS_FOR_NEXT_FRAME = 100;
 
-std::ifstream archivo("config.txt"); // Abre el archivo en modo lectura
-int _i = 0;
+const int SQUARE0 = 0;
+const int SQUARE1 = 1;
+const int SQUARE2 = 2;
+const int SQUARE3 = 3;
+
+std::ifstream archivo("config.txt");
+int linesToRead = 0;
 
 
-struct Pokemon
-{
-    int posX;
-    int posY;
-    int health;
-    enum Place
-    {
-        PALET,
-        FOREST
-    };
 
-    Place myplace;
-};
 
 struct Pokeball {
     int posX = 2;
     int posY = 2;
+
+    int square = 0;
 };
 
 void PutPlayer(Player& me, int width, char **map) {
@@ -49,13 +44,35 @@ bool PutPokemon(Pokemon* pokemons, int& allPokemonAround, int& posX, int& posY) 
     for (int a = 0; a < allPokemonAround; a++) {
 
 
-        if (pokemons[a].posX == posX && pokemons[a].posY == posY) {
+        if (pokemons[a].GetPosX() == posX && pokemons[a].GetPosY() == posY) {
                 
             return true;
         }
     }
 
     return false;
+}
+
+
+void RandomizePokemon(Pokemon& pokemon, int width, int height) {
+
+    if(pokemon.GetSquare() == SQUARE0)
+    {
+        pokemon.SetPosX(rand() % ((width / 2) - 1));
+        pokemon.SetPosY(rand() % ((height / 2) - 1));
+    }
+    else if (pokemon.GetSquare() == SQUARE1)
+    {
+        pokemon.SetPosX(rand() % ((width / 2) - 1));
+        pokemon.SetPosY(((height / 2) + 1) + (rand() % ((height / 2) - 1)));
+
+    }
+}
+
+void PutPokemon2(char** map, int& posX, int& posY) {
+
+    map[posX][posY] == 'P';
+
 }
 
 bool PutPokeball(Pokeball* pokeballs, int& allPokeballAround, int& posX, int& posY) {
@@ -72,6 +89,27 @@ bool PutPokeball(Pokeball* pokeballs, int& allPokeballAround, int& posX, int& po
     return false;
 }
 
+
+void RandomizePokeball(Pokeball& pokeball, int maxPokeballs, int index, int width, int height) {
+
+    if (index < maxPokeballs / 4) {
+        pokeball.posX = rand() % ((width / 2) - 1);
+        pokeball.posY = rand() % ((height / 2) - 1);
+    }
+    else if (index < maxPokeballs / 2) {
+        pokeball.posX = rand() % ((width / 2) - 1);
+        pokeball.posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
+    }
+    else if (index < (maxPokeballs / 4) * 3) {
+        pokeball.posX = ((width / 2) + 1) + (rand() % ((width / 2) - 1));
+        pokeball.posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
+    }
+    else {
+        pokeball.posX = ((width / 2) + 1) + (rand() % ((width / 2) - 1));
+        pokeball.posY = rand() % ((height / 2) - 1);
+    }
+}
+
 void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumber) {
 
     for (int j = 0; j < linea.size(); j++) {
@@ -79,9 +117,6 @@ void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumb
         if (linea[j] != ';' && leftNumber) {
             leftNum *= 10;
             leftNum += linea[j] - CHAR_NUM_TO_NUM;
-            //std::cout << width << std::endl << std::endl;
-
-
         }
         else if (leftNumber)
             leftNumber = false;
@@ -97,52 +132,26 @@ void CheckNumbers(std::string linea, int& leftNum, int& rightNum, bool& leftNumb
 void CheckOneNumber(std::string linea, int& num) {
     for (int i = 0; i < linea.size(); i++)
     {
-        num *= 10;
-        num += linea[i] - 48;
+        if (linea[i] != ';') {
+            num *= 10;
+            num += linea[i] - CHAR_NUM_TO_NUM;
+        }
+        
     }
-    
+    std::cout << "---------------------------------------------------------------" << std::endl;
+    std::cout << std::endl << std::endl << num << std::endl << std::endl;
+    std::cout << "---------------------------------------------------------------" << std::endl;
 }
 
-int CheckForPokemon(Pokemon& pokemons, int& width, int& height, bool& fighting) {
+int CheckForPokemon(Pokemon& pokemon, int& width, int& height, bool& fighting) {
 
-    /*for (int i = 0; i < group1 + group2; i++)
-    {
-        if (targetPosX == pokemons[i].posX)
-        {
-            if (targetPosY == pokemons[i].posY)
-            {
-                int random;
-                random = rand() % pokemons[i].health;
-
-                if (random <= 1)
-                {
-                    if (i < group1) {
-                        pokemons[i].posX = rand() % ((width / 2) - 1);
-                        pokemons[i].posY = rand() % ((height / 2) - 1);
-                    }
-                    else if (i >= group1) {
-                        pokemons[i].posX = rand() % ((width / 2) - 1);
-                        pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-                    }
-
-                    return 1;
-                }
-            }
-        }
-    }*/
+    
     int random;
-    random = rand() % pokemons.health;
+    random = rand() % pokemon.GetHealth();
 
     if (random <= 1)
     {
-        if (pokemons.myplace == Pokemon::PALET) {
-            pokemons.posX = rand() % ((width / 2) - 1);
-            pokemons.posY = rand() % ((height / 2) - 1);
-        }
-        else if (pokemons.myplace == Pokemon::FOREST) {
-            pokemons.posX = rand() % ((width / 2) - 1);
-            pokemons.posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-        }
+        RandomizePokemon(pokemon, width, height);
 
         return 1;
     }
@@ -150,47 +159,19 @@ int CheckForPokemon(Pokemon& pokemons, int& width, int& height, bool& fighting) 
     return 0;
 }
 
-void DamagePokemon(Pokemon& pokemons, int& width, int& height, bool& fighting/*, int& allPokemons, int targetPosX, int targetPosY, int& width, int& height*/) {
+void DamagePokemon(Pokemon& pokemon, int& width, int& height, bool& fighting, int damage, int maxHealth/*, int& allPokemons, int targetPosX, int targetPosY, int& width, int& height*/) {
 
     std::cout << "Damaging pokemon";
 
-    pokemons.health--;
-    if (pokemons.health <= 0)
+    pokemon.MinusHealth(damage);
+    if (pokemon.GetHealth() <= 0)
     {
         fighting = false;
-        pokemons.health = 5;
+        pokemon.SetHealth(maxHealth);
 
-        if (pokemons.myplace == Pokemon::PALET) {
-            pokemons.posX = rand() % ((width / 2) - 1);
-            pokemons.posY = rand() % ((height / 2) - 1);
-        }
-        else if (pokemons.myplace == Pokemon::FOREST) {
-            pokemons.posX = rand() % ((width / 2) - 1);
-            pokemons.posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-        }
+        RandomizePokemon(pokemon, width, height);
     }
 
-    /*for (int i = 0; i < allPokemons; i++)
-    {
-        if (targetPosX == pokemons[i].posX)
-        {
-            if (targetPosY == pokemons[i].posY)
-            {
-                pokemons[i].health--;
-                if (pokemons[i].health <= 0)
-                {
-                    if (pokemons[i].myplace == Pokemon::PALET) {
-                        pokemons[i].posX = rand() % ((width / 2) - 1);
-                        pokemons[i].posY = rand() % ((height / 2) - 1);
-                    }
-                    else if (pokemons[i].myplace == Pokemon::FOREST) {
-                        pokemons[i].posX = rand() % ((width / 2) - 1);
-                        pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-                    }
-                }
-            }
-        }
-    }*/
 }
 
 void CombatOptions() {
@@ -204,12 +185,12 @@ void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, boo
 
     for (int _i = 0; _i < allPokemons; _i++)
     {
-        if (me.GetMyPlace() == pokemons[_i].myplace) {
+        if (me.GetMyPlace() == pokemons[_i].GetSquare()) {
             for (int i = POKE_COMBAT_AREA_MIN; i < POKE_COMBAT_AREA_MAX; i++)
             {
                 for (int j = POKE_COMBAT_AREA_MIN; j < POKE_COMBAT_AREA_MAX; j++)
                 {
-                    if (me.GetX() + j == pokemons[_i].posX && me.GetY() + i == pokemons[_i].posY)
+                    if (me.GetX() + j == pokemons[_i].GetPosX() && me.GetY() + i == pokemons[_i].GetPosY())
                     {
                         currentPokemonNum = _i;
                         fighting = true; 
@@ -228,6 +209,24 @@ int main()
     bool fighting = false;
 
     int currentPokemonNum = 0;
+
+    int pokemonAround1 = 0;
+    int pokemonNeeded1 = 0;
+    int pokemonAround2 = 0;
+    int pokemonNeeded2 = 0;
+
+    int maxPokeballs = 12;
+    Pokeball *pokeballs = new Pokeball[maxPokeballs];
+
+
+    std::string linea;
+    
+    
+    int width = 0;
+    int height = 0;
+    int pikachuDamage = 0;
+    int pokemonMaxHealth = 0;
+    int mewTwoHealht = 0;
 
     switch (state.ReturnGameState())
     {
@@ -254,49 +253,36 @@ int main()
         break;
     }
 
-    int pokemonAround1 = 0;
-    int pokemonNeeded1 = 0;
-    int pokemonAround2 = 0;
-    int pokemonNeeded2 = 0;
-
-    int maxPokeballs = 12;
-    Pokeball *pokeballs = new Pokeball[maxPokeballs];
 
 
-    std::string linea;
-    
-    
-    int width = 0;
-    int height = 0;
-    int pikachuDamage = 0;
-    int pokemonHealth = 0;
-    int mewTwoHealht = 0;
+
+
     //READ DOCUMENT
     if (archivo.is_open()) {
 
-        while (std::getline(archivo, linea) && _i < 10) {
+        while (std::getline(archivo, linea) && linesToRead < 10) {
 
             bool leftNumber = true;
 
-            if (_i == 0) // obtener las dimensiones estipuladas
+            if (linesToRead == 0) // obtener las dimensiones estipuladas
                 CheckNumbers(linea, width, height, leftNumber);
 
-            else if (_i == 1) // obtener el numero de los pokemon del principio
+            else if (linesToRead == 1) // obtener el numero de los pokemon del principio
                 CheckNumbers(linea, pokemonAround1, pokemonNeeded1, leftNumber);
 
-            else if (_i == 2) // obtener el numero de los pokemon de la segunda zona
+            else if (linesToRead == 2) // obtener el numero de los pokemon de la segunda zona
                 CheckNumbers(linea, pokemonAround2, pokemonNeeded2, leftNumber);
 
-            else if (_i == 3) // obtener el daño de pikachu
+            else if (linesToRead == 3) // obtener el daño de pikachu
                 CheckOneNumber(linea, pikachuDamage);
 
-            else if (_i == 4) // obtener la vida de los pokemon salvages y la vida de MewTwo // 5;15
-                CheckNumbers(linea, pokemonHealth, mewTwoHealht, leftNumber);
+            else if (linesToRead == 4) // obtener la vida de los pokemon salvages y la vida de MewTwo // 5;15
+                CheckNumbers(linea, pokemonMaxHealth, mewTwoHealht, leftNumber);
 
             /*else if (_i == 5) // obtenener el mínimo y máximo para que se muevan los pokemon
                 CheckNumbers(linea, width, height, leftNumber);*/
 
-            _i++;
+            linesToRead++;
         }
     }
     else {
@@ -313,21 +299,17 @@ int main()
 
     for (int i = 0; i < pokemonAround1; i++)
     {
-        pokemons[i].posX = rand() % ((width / 2) -1);
-        pokemons[i].posY = rand() % ((height / 2) -1);
+        pokemons[i].SetPlace(0);
+        pokemons[i].SetHealth(pokemonMaxHealth);
 
-        pokemons[i].myplace = Pokemon::PALET;
-
-        pokemons[i].health = pokemonHealth;
+        RandomizePokemon(pokemons[i], width, height);
     }
     for (int i = pokemonAround1; i < pokemonAround1 + pokemonAround2; i++)
     {
-        pokemons[i].posX = rand() % ((width / 2) - 1);
-        pokemons[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1)); 
+        pokemons[i].SetPlace(1);
+        pokemons[i].SetHealth(pokemonMaxHealth);
 
-        pokemons[i].myplace = Pokemon::FOREST;
-
-        pokemons[i].health = pokemonHealth;
+        RandomizePokemon(pokemons[i], width, height);
     }
 
 
@@ -361,6 +343,9 @@ int main()
         }
     }
 
+    for (int i = 0; i < maxPokeballs; i++) {
+        RandomizePokeball(pokeballs[i], maxPokeballs, i, width, height);
+    }
 
 
     while (!GetAsyncKeyState(VK_ESCAPE)) {
@@ -371,7 +356,7 @@ int main()
                 if (me.GetPokeballs() > 0) {
                     fighting = false;
                     me.CapturePokemon(CheckForPokemon(pokemons[currentPokemonNum], width, height, fighting));
-                    DamagePokemon(pokemons[currentPokemonNum], width, height, fighting);
+                    DamagePokemon(pokemons[currentPokemonNum], width, height, fighting, pikachuDamage, pokemonMaxHealth);
 
                     if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
                         for (int i = 0; i < height; i++)
@@ -398,15 +383,7 @@ int main()
                 }
             }
             else if (GetAsyncKeyState(VK_SHIFT)) {
-                DamagePokemon(pokemons[currentPokemonNum], width, height, fighting);
-                /*if (me.GetDir() == '<')
-                    DamagePokemon(pokemons, allPokemonAround, me.GetX(), me.GetY() - 1, width, height);
-                else if (me.GetDir() == '>')
-                    DamagePokemon(pokemons, allPokemonAround, me.GetX(), me.GetY() + 1, width, height);
-                else if (me.GetDir() == '^')
-                    DamagePokemon(pokemons, allPokemonAround, me.GetX() - 1, me.GetY(), width, height);
-                else if (me.GetDir() == 'v')
-                    DamagePokemon(pokemons, allPokemonAround, me.GetX() + 1, me.GetY(), width, height);*/
+                DamagePokemon(pokemons[currentPokemonNum], width, height, fighting, pikachuDamage, pokemonMaxHealth);
 
             }
             else if (GetAsyncKeyState(VK_BACK)) {
@@ -454,9 +431,6 @@ int main()
 
             FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
         }
-        //hacer una función para las teclas de movimiento
-        //poner return 1   
-        // si es return 1, comprovar todas las pokeball
         
         
 
@@ -464,27 +438,12 @@ int main()
             if (me.GetX() == pokeballs[i].posX && me.GetY() == pokeballs[i].posY) {
                 me.IncreasePokeballs();
 
-                if (i < maxPokeballs / 4) {
-                    pokeballs[i].posX = rand() % ((width / 2) - 1);
-                    pokeballs[i].posY = rand() % ((height / 2) - 1);
-                }
-                else if (i < maxPokeballs / 2) {
-                    pokeballs[i].posX = rand() % ((width / 2) - 1);
-                    pokeballs[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-                }
-                else if (i < (maxPokeballs / 4) * 3) {
-                    pokeballs[i].posX = ((width / 2) + 1) + (rand() % ((width / 2) - 1));
-                    pokeballs[i].posY = ((height / 2) + 1) + (rand() % ((height / 2) - 1));
-                }
-                else {
-                    pokeballs[i].posX = ((width / 2) + 1) + (rand() % ((width / 2) - 1));
-                    pokeballs[i].posY = rand() % ((height / 2) - 1);
-                }
+
+                RandomizePokeball(pokeballs[i], maxPokeballs, i, width, height);
             }
         }
         
 
-        //GET ALL CHARS from array TO 0
 
         int lowerX = me.GetX() - 5;
         int higherX = me.GetX() + 5;
@@ -525,7 +484,6 @@ int main()
 
 
             for (int j = lowerY; j < higherY; j++) {
-                //j >= me.GetY() - 5 - (width - me.GetY())  
                 if (i == me.GetX() && j == me.GetY())
                     PutPlayer(me, width, map);
                 else if (PutPokemon(pokemons, allPokemonAround, i, j))
@@ -534,22 +492,13 @@ int main()
                     std::cout << 'O';
                 else
                     std::cout << map[j][i];
-
-                /*if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() < pokemonNeeded1)
-                    std::cout << "          " <<
-                    me.ShowCapturedPokemon() << '/' << pokemonNeeded1 << " pokemon";
-                else if (i == lowerX && j == higherY - 1 && me.ShowCapturedPokemon() >= pokemonNeeded1)
-                    std::cout << "          " <<
-                    me.ShowCapturedPokemon() << '/' << pokemonNeeded2 << " pokemon";*/
             }
-
 
             std::cout << std::endl;
         }
 
-        CombatOptions();
 
-        Sleep(100);
+        Sleep(MILLIS_FOR_NEXT_FRAME);
     }
     
     //We delete map from stack
