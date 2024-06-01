@@ -34,10 +34,24 @@ char Player::GetDir() {
 	return this->direction;
 }
 
+Player::Place Player::GetMyPlace() {
+	return this->myPlace;
+}
+
 void Player::CapturePokemon(int a)
 {
-	this->capturedPokemon += a;
-	this->pokeballs--;
+	if (a != 0)
+	{
+		pokeballs > 0 ?
+			this->capturedPokemon += a,
+			this->pokeballs--
+			:
+			0;
+	}
+}
+
+void Player::DamagePokemon() {
+
 }
 
 void Player::IncreasePokeballs() {

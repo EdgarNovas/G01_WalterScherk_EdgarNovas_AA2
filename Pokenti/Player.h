@@ -8,6 +8,14 @@ private:
 	int capturedPokemon;
 	int pokeballs;
 
+	enum Place
+	{
+		PALET,
+		CAVE
+	};
+
+	Place myPlace = Place::PALET;
+
 public:
 	Player();
 
@@ -21,6 +29,8 @@ public:
 
 	char GetDir();
 
+	Place GetMyPlace();
+
 	void CapturePokemon(int a);
 
 	void IncreasePokeballs();
@@ -28,6 +38,8 @@ public:
 	int GetPokeballs();
 
 	int ShowCapturedPokemon();
+
+	void DamagePokemon();
 
 
 };
