@@ -6,12 +6,29 @@ class Pokemon
     int health;
     int squareNumber;
 
+    int direction;
+    int nature;
+    int turnsUntilNextMove;
+    int turnCounter;
+
+    int minX;
+    int minY;
+    int maxX;
+    int maxY;
 public:
     
+    Pokemon();
+
     int GetPosX();
     int GetPosY();
     void SetPosX(int newPosX);
     void SetPosY(int newPosY);
+
+    void RandomizePokemon();
+
+    void DefineMinsAndMaxs(int width, int height);
+    void Move();
+    void SetTimeForNextMove(int min, int max);
 
     void SetPlace(int newSquareNumber);
     int GetSquare();

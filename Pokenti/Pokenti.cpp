@@ -12,7 +12,7 @@ const int CHAR_NUM_TO_NUM = 48;
 const int POKE_COMBAT_AREA_MIN = -1;
 const int POKE_COMBAT_AREA_MAX = 2;
 
-const int MILLIS_FOR_NEXT_FRAME = 100;
+const int MILLIS_FOR_NEXT_FRAME = 500;
 
 const int SQUARE0 = 0;
 const int SQUARE1 = 1;
@@ -51,22 +51,6 @@ bool PutPokemon(Pokemon* pokemons, int& allPokemonAround, int& posX, int& posY) 
     }
 
     return false;
-}
-
-
-void RandomizePokemon(Pokemon& pokemon, int width, int height) {
-
-    if(pokemon.GetSquare() == SQUARE0)
-    {
-        pokemon.SetPosX(rand() % ((width / 2) - 1));
-        pokemon.SetPosY(rand() % ((height / 2) - 1));
-    }
-    else if (pokemon.GetSquare() == SQUARE1)
-    {
-        pokemon.SetPosX(rand() % ((width / 2) - 1));
-        pokemon.SetPosY(((height / 2) + 1) + (rand() % ((height / 2) - 1)));
-
-    }
 }
 
 void PutPokemon2(char** map, int& posX, int& posY) {
@@ -148,7 +132,7 @@ int CheckForPokemon(Pokemon& pokemon, int& width, int& height, bool& fighting) {
 
     if (random <= 1)
     {
-        RandomizePokemon(pokemon, width, height);
+        pokemon.RandomizePokemon();
 
         return 1;
     }
@@ -165,7 +149,7 @@ void DamagePokemon(Pokemon& pokemon, int& width, int& height, bool& fighting, in
         fighting = false;
         pokemon.SetHealth(maxHealth);
 
-        RandomizePokemon(pokemon, width, height);
+        pokemon.RandomizePokemon();
     }
 
 }
@@ -191,7 +175,7 @@ void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, boo
 
     for (int _i = 0; _i < allPokemons; _i++)
     {
-        if (me.GetMyPlace() == pokemons[_i].GetSquare()) {
+        //if (me.GetMyPlace() == pokemons[_i].GetSquare()) {
             for (int i = POKE_COMBAT_AREA_MIN; i < POKE_COMBAT_AREA_MAX; i++)
             {
                 for (int j = POKE_COMBAT_AREA_MIN; j < POKE_COMBAT_AREA_MAX; j++)
@@ -203,7 +187,7 @@ void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, boo
                     }
                 }
             }
-        }
+        //}
     }
 }
 
@@ -233,6 +217,8 @@ int main()
     int pikachuDamage = 0;
     int pokemonMaxHealth = 0;
     int mewTwoHealht = 0;
+    int minWaitTurns = 0;
+    int maxWaitTurns = 0;
 
     switch (state.ReturnGameState())
     {
@@ -285,8 +271,8 @@ int main()
             else if (linesToRead == 4) // obtener la vida de los pokemon salvages y la vida de MewTwo // 5;15
                 CheckNumbers(linea, pokemonMaxHealth, mewTwoHealht, leftNumber);
 
-            /*else if (_i == 5) // obtenener el mínimo y máximo para que se muevan los pokemon
-                CheckNumbers(linea, width, height, leftNumber);*/
+            else if (linesToRead == 5) // obtenener el mínimo y máximo para que se muevan los pokemon
+                CheckNumbers(linea, minWaitTurns, maxWaitTurns, leftNumber);
 
             linesToRead++;
         }
@@ -303,24 +289,7 @@ int main()
 
     srand(time(NULL));
 
-
-    me.ChangeMyPlace(0);
-    for (int i = 0; i < pokemonAround1; i++)
-    {
-        pokemons[i].SetPlace(0);
-        pokemons[i].SetHealth(pokemonMaxHealth);
-
-        RandomizePokemon(pokemons[i], width, height);
-    }
-    for (int i = pokemonAround1; i < pokemonAround1 + pokemonAround2; i++)
-    {
-        pokemons[i].SetPlace(1);
-        pokemons[i].SetHealth(pokemonMaxHealth);
-
-        RandomizePokemon(pokemons[i], width, height);
-    }
-
-
+    
     // DEFINE SIZE OF MAP
     map = new char*[height]; 
                                 
@@ -353,6 +322,19 @@ int main()
 
     for (int i = 0; i < maxPokeballs; i++) {
         RandomizePokeball(pokeballs[i], maxPokeballs, i, width, height);
+    }
+
+    for (int i = 0; i < allPokemonAround; i++)
+    {
+        pokemons[i].SetHealth(pokemonMaxHealth);
+        if (i < pokemonAround1)
+            pokemons[i].SetPlace(0);
+        else
+            pokemons[i].SetPlace(1);
+
+        pokemons[i].DefineMinsAndMaxs(width, height);
+        pokemons[i].SetTimeForNextMove(minWaitTurns, maxWaitTurns);
+        pokemons[i].RandomizePokemon();
     }
 
 
@@ -401,10 +383,6 @@ int main()
         }
         else if (GetAsyncKeyState(VK_RIGHT)) {
 
-            if (me.GetX() > width / 2) {
-                me.ChangeMyPlace(1);
-            }
-
             me.SetDirection('>');
 
             if (me.GetY() + 1 <= width -1 && map[me.GetY() + 1][me.GetX()] == '-')
@@ -413,10 +391,6 @@ int main()
             FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
         }
         else if (GetAsyncKeyState(VK_LEFT)) {
-
-            if (me.GetX() < width / 2) {
-                me.ChangeMyPlace(1);
-            }
 
             me.SetDirection('<');
 
@@ -456,6 +430,16 @@ int main()
         }
         
 
+        
+        if (fighting == false)
+        {
+            for (int i = 0; i < allPokemonAround; i++)
+            {
+                pokemons[i].Move();
+            }
+        }
+        
+
 
         int lowerX = me.GetX() - 5;
         int higherX = me.GetX() + 5;
@@ -479,6 +463,8 @@ int main()
             lowerY -= higherY - height, higherY = height
             :
             0;
+
+        
 
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hConsole, 12);
