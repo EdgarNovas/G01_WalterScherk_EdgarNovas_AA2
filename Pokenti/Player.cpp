@@ -17,25 +17,29 @@ void Player::SetPosition(int _x, int _y)
 
 int Player::GetX()
 {
-	return this->x;
+	return x;
 }
 
 int Player::GetY()
 {
-	return this->y;
+	return y;
 }
 
-void Player::SetDirection(char direction)
+void Player::SetDirection(char _direction)
 {
-	this->direction = direction;
+	direction = _direction;
 }
 
 char Player::GetDir() {
-	return this->direction;
+	return direction;
 }
 
-Player::Place Player::GetMyPlace() {
-	return this->myPlace;
+int Player::GetMyPlace() {
+	return squareNumber;
+}
+
+void Player::ChangeMyPlace(int i) {
+	squareNumber = i;
 }
 
 void Player::CapturePokemon(int a)

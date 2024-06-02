@@ -22,9 +22,6 @@ const int SQUARE3 = 3;
 std::ifstream archivo("config.txt");
 int linesToRead = 0;
 
-
-
-
 struct Pokeball {
     int posX = 2;
     int posY = 2;
@@ -32,12 +29,15 @@ struct Pokeball {
     int square = 0;
 };
 
-void PutPlayer(Player& me, int width, char **map) {
-
-    std::cout << me.GetDir();
+void CleanKeys() {
+    GetAsyncKeyState(VK_RIGHT);
+    GetAsyncKeyState(VK_LEFT);
+    GetAsyncKeyState(VK_DOWN);
+    GetAsyncKeyState(VK_UP);
+    GetAsyncKeyState(VK_SPACE);
+    GetAsyncKeyState(VK_SHIFT);
+    GetAsyncKeyState(VK_BACK);
 }
-
-
 
 bool PutPokemon(Pokemon* pokemons, int& allPokemonAround, int& posX, int& posY) {
     
@@ -138,9 +138,6 @@ void CheckOneNumber(std::string linea, int& num) {
         }
         
     }
-    std::cout << "---------------------------------------------------------------" << std::endl;
-    std::cout << std::endl << std::endl << num << std::endl << std::endl;
-    std::cout << "---------------------------------------------------------------" << std::endl;
 }
 
 int CheckForPokemon(Pokemon& pokemon, int& width, int& height, bool& fighting) {
@@ -159,9 +156,8 @@ int CheckForPokemon(Pokemon& pokemon, int& width, int& height, bool& fighting) {
     return 0;
 }
 
-void DamagePokemon(Pokemon& pokemon, int& width, int& height, bool& fighting, int damage, int maxHealth/*, int& allPokemons, int targetPosX, int targetPosY, int& width, int& height*/) {
+void DamagePokemon(Pokemon& pokemon, int& width, int& height, bool& fighting, int damage, int maxHealth) {
 
-    std::cout << "Damaging pokemon";
 
     pokemon.MinusHealth(damage);
     if (pokemon.GetHealth() <= 0)
@@ -174,11 +170,21 @@ void DamagePokemon(Pokemon& pokemon, int& width, int& height, bool& fighting, in
 
 }
 
-void CombatOptions() {
-    std::cout << "nombre de enemigo     " << "nivel de salud" << std::endl;
-    std::cout << "atacar" << std::endl;
-    std::cout << "capturar" << std::endl;
-    std::cout << "huir" << std::endl;
+void ShowCombatOptions(Pokemon& pokemon) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, 12);
+    std::cout << "nombre de enemigo     ";
+
+    //SetConsoleTextAttribute(hConsole, 12);
+    std::cout << "nivel de salud ";
+    SetConsoleTextAttribute(hConsole, 10);
+    std::cout << pokemon.GetHealth() << std::endl;
+    SetConsoleTextAttribute(hConsole, 12);
+    std::cout << "              atacar" << std::endl;
+    std::cout << "              capturar" << std::endl;
+    std::cout << "              huir" << std::endl;
+
+    SetConsoleTextAttribute(hConsole, 7);
 }
 
 void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, bool& fighting, int& currentPokemonNum) {
@@ -297,6 +303,8 @@ int main()
 
     srand(time(NULL));
 
+
+    me.ChangeMyPlace(0);
     for (int i = 0; i < pokemonAround1; i++)
     {
         pokemons[i].SetPlace(0);
@@ -321,7 +329,7 @@ int main()
         map[i] = new char[width];
     }
 
-    for (int i = 0; i < height; i++) 
+    for (int i = 0; i < height; i++)
     {
         for (int j = 0; j < width; j++)
         {
@@ -389,13 +397,13 @@ int main()
             else if (GetAsyncKeyState(VK_BACK)) {
                 fighting = false;
             }
-
-            GetAsyncKeyState(VK_RIGHT);
-            GetAsyncKeyState(VK_LEFT);
-            GetAsyncKeyState(VK_DOWN);
-            GetAsyncKeyState(VK_UP);
+            
         }
         else if (GetAsyncKeyState(VK_RIGHT)) {
+
+            if (me.GetX() > width / 2) {
+                me.ChangeMyPlace(1);
+            }
 
             me.SetDirection('>');
 
@@ -405,6 +413,10 @@ int main()
             FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
         }
         else if (GetAsyncKeyState(VK_LEFT)) {
+
+            if (me.GetX() < width / 2) {
+                me.ChangeMyPlace(1);
+            }
 
             me.SetDirection('<');
 
@@ -482,10 +494,14 @@ int main()
         SetConsoleTextAttribute(hConsole, 7);
         for (int i = lowerX; i < higherX; i++) {
 
+            std::cout << "      ";
 
             for (int j = lowerY; j < higherY; j++) {
+                
+                std::cout << ' ';
+                
                 if (i == me.GetX() && j == me.GetY())
-                    PutPlayer(me, width, map);
+                    std::cout << me.GetDir();
                 else if (PutPokemon(pokemons, allPokemonAround, i, j))
                     std::cout << 'P';
                 else if (PutPokeball(pokeballs, maxPokeballs, i, j))
@@ -497,11 +513,14 @@ int main()
             std::cout << std::endl;
         }
 
+        if (fighting == true) 
+            ShowCombatOptions(pokemons[currentPokemonNum]);
+        
+        CleanKeys();
 
         Sleep(MILLIS_FOR_NEXT_FRAME);
     }
     
-    //We delete map from stack
     for (int i = 0; i < height; i++) {
         delete [] map[i];
     }

@@ -8,13 +8,7 @@ private:
 	int capturedPokemon;
 	int pokeballs;
 
-	enum Place
-	{
-		PALET,
-		CAVE
-	};
-
-	Place myPlace = Place::PALET;
+	int squareNumber;
 
 public:
 	Player();
@@ -25,11 +19,12 @@ public:
 	
 	int GetY();
 
-	void SetDirection(char direction);
+	void SetDirection(char _direction);
 
 	char GetDir();
 
-	Place GetMyPlace();
+	int GetMyPlace();
+	void ChangeMyPlace(int i);
 
 	void CapturePokemon(int a);
 
