@@ -26,10 +26,10 @@ public:
 	int GetMyPlace();
 	void ChangeMyPlace(int i);
 
-	void CapturePokemon(int a);
+	void CapturePokemon();
 
 	void IncreasePokeballs();
-
+	void DecreasePokeballs();
 	int GetPokeballs();
 
 	int ShowCapturedPokemon();

@@ -2,17 +2,17 @@
 
 
 Player::Player() {
-	this->x = 0;
-	this->y = 0;
-	this->direction = '>';
-	this->capturedPokemon = 0;
-	this->pokeballs = 0;
+	x = 10;
+	y = 10;
+	direction = '>';
+	capturedPokemon = 0;
+	pokeballs = 0;
 }
 
 void Player::SetPosition(int _x, int _y)
 {
-	this->x = _x;
-	this->y = _y;
+	x = _x;
+	y = _y;
 }
 
 int Player::GetX()
@@ -42,16 +42,13 @@ void Player::ChangeMyPlace(int i) {
 	squareNumber = i;
 }
 
-void Player::CapturePokemon(int a)
+void Player::CapturePokemon()
 {
-	if (a != 0)
-	{
-		pokeballs > 0 ?
-			this->capturedPokemon += a,
-			this->pokeballs--
-			:
-			0;
-	}
+	pokeballs > 0 ?
+		capturedPokemon++,
+		pokeballs--
+		:
+		0;
 }
 
 void Player::DamagePokemon() {
@@ -59,13 +56,19 @@ void Player::DamagePokemon() {
 }
 
 void Player::IncreasePokeballs() {
-	this->pokeballs++;
+	pokeballs++;
+}
+
+void Player::DecreasePokeballs()
+{
+	if (pokeballs > 0)
+		pokeballs--;
 }
 
 int Player::GetPokeballs() {
-	return this->pokeballs;
+	return pokeballs;
 }
 
 int Player::ShowCapturedPokemon() {
-	return this->capturedPokemon;
+	return capturedPokemon;
 }

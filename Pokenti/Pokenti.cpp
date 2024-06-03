@@ -39,9 +39,9 @@ void CleanKeys() {
     GetAsyncKeyState(VK_BACK);
 }
 
-bool PutPokemon(Pokemon* pokemons, int& allPokemonAround, int& posX, int& posY) {
+bool PutPokemon(Pokemon* pokemons, int allPokemonAround, int& posX, int& posY) {
     
-    for (int a = 0; a < allPokemonAround; a++) {
+    for (int a = 0; a < allPokemonAround -1; a++) {
 
 
         if (pokemons[a].GetPosX() == posX && pokemons[a].GetPosY() == posY) {
@@ -124,20 +124,19 @@ void CheckOneNumber(std::string linea, int& num) {
     }
 }
 
-int CheckForPokemon(Pokemon& pokemon, int& width, int& height, bool& fighting) {
+bool CheckIfPokemonIsCapturable(Pokemon& pokemon, int& width, int& height, bool& fighting) {
 
     
-    int random;
-    random = rand() % pokemon.GetHealth();
+    int random = rand() % (pokemon.GetHealth() + pokemon.GetDifficulty());
 
     if (random <= 1)
     {
         pokemon.RandomizePokemon();
 
-        return 1;
+        return true;
     }
 
-    return 0;
+    return false;
 }
 
 void DamagePokemon(Pokemon& pokemon, int& width, int& height, bool& fighting, int damage, int maxHealth) {
@@ -283,7 +282,7 @@ int main()
 
     archivo.close();
 
-    int allPokemonAround = pokemonAround1 + pokemonAround2;
+    int allPokemonAround = pokemonAround1 + pokemonAround2 + 1;
 
     Pokemon* pokemons = new Pokemon[allPokemonAround];
 
@@ -335,8 +334,21 @@ int main()
         pokemons[i].DefineMinsAndMaxs(width, height);
         pokemons[i].SetTimeForNextMove(minWaitTurns, maxWaitTurns);
         pokemons[i].RandomizePokemon();
-    }
 
+        if (i == pokemonAround1 + pokemonAround2)
+        {
+            pokemons[i].SetHealth(mewTwoHealht);
+            pokemons[i].SetPlace(2);
+            pokemons[i].SetPosX((width / 4) * 3);
+            pokemons[i].SetPosY((height / 4) * 3);
+            pokemons[i].SetMewtwoNature();
+        }
+    }
+    /*mewtwo.SetHealth(mewTwoHealht);
+    mewtwo.SetPlace(2);
+    mewtwo.SetPosX((width / 4) * 3);
+    mewtwo.SetPosY((height / 4) * 3);*/
+    //pokemons[allPokemonAround] = mewtwo;
 
     while (!GetAsyncKeyState(VK_ESCAPE)) {
 
@@ -344,9 +356,15 @@ int main()
         if (fighting == true) {
             if (GetAsyncKeyState(VK_SPACE)) {
                 if (me.GetPokeballs() > 0) {
-                    fighting = false;
-                    me.CapturePokemon(CheckForPokemon(pokemons[currentPokemonNum], width, height, fighting));
-                    DamagePokemon(pokemons[currentPokemonNum], width, height, fighting, pikachuDamage, pokemonMaxHealth);
+                    if (CheckIfPokemonIsCapturable(pokemons[currentPokemonNum], width, height, fighting) == true)
+                    {
+                        fighting = false;
+                        me.CapturePokemon();
+                    }
+                    else
+                        me.DecreasePokeballs();
+                    
+                    //DamagePokemon(pokemons[currentPokemonNum], width, height, fighting, pikachuDamage, pokemonMaxHealth);
 
                     if (me.ShowCapturedPokemon() >= pokemonNeeded2) {
                         for (int i = 0; i < height; i++)
@@ -490,6 +508,8 @@ int main()
                     std::cout << me.GetDir();
                 else if (PutPokemon(pokemons, allPokemonAround, i, j))
                     std::cout << 'P';
+                else if (i == pokemons[allPokemonAround - 1].GetPosX() && j == pokemons[allPokemonAround - 1].GetPosY())
+                    std::cout << 'M';
                 else if (PutPokeball(pokeballs, maxPokeballs, i, j))
                     std::cout << 'O';
                 else

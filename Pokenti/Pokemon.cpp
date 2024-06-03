@@ -1,6 +1,9 @@
 #include "Pokemon.h"
 #include <iostream>
 
+const int dificultyPokemon = 1;
+const int dificultyMewtwo = 5;
+
 Pokemon::Pokemon() {
 	
 	posX = 0;
@@ -17,6 +20,8 @@ Pokemon::Pokemon() {
 	maxY = 0;
 
 	turnCounter = 0;
+
+	addedDifficulty = dificultyPokemon;
 }
 
 void Pokemon::SetPlace(int newSquareNumber) {
@@ -127,7 +132,25 @@ void Pokemon::SetTimeForNextMove(int min, int max) {
 }
 
 void Pokemon::RandomizePokemon() {
-
+	if (squareNumber <= 1)
+	{
 		posX = (rand() % maxX) + minX;
 		posY = (rand() % maxY) + minY;
+	}
+	else {
+		posX = -10;
+		posY = -10;
+	}
+	
+}
+
+int Pokemon::GetDifficulty() {
+	return addedDifficulty;
+}
+
+void Pokemon::SetMewtwoDifficulty() {
+	addedDifficulty = dificultyMewtwo;
+}
+void Pokemon::SetMewtwoNature() {
+	nature = -1;
 }

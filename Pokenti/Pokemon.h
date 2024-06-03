@@ -15,6 +15,8 @@ class Pokemon
     int minY;
     int maxX;
     int maxY;
+
+    int addedDifficulty;
 public:
     
     Pokemon();
@@ -37,5 +39,9 @@ public:
     int GetHealth();
 
     void MinusHealth(int damage);
+
+    int GetDifficulty();
+    void SetMewtwoDifficulty();
+    void SetMewtwoNature();
 };
 
