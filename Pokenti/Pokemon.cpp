@@ -154,3 +154,11 @@ void Pokemon::SetMewtwoDifficulty() {
 void Pokemon::SetMewtwoNature() {
 	nature = -1;
 }
+
+
+void Pokemon::IsMewtwoCaptured(bool& hasMewTwo) {
+	if (nature == -1) {
+		hasMewTwo = true;
+	}
+
+}

@@ -43,5 +43,7 @@ public:
     int GetDifficulty();
     void SetMewtwoDifficulty();
     void SetMewtwoNature();
+
+    void IsMewtwoCaptured(bool& hasMewTwo);
 };
 

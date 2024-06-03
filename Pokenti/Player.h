@@ -10,6 +10,7 @@ private:
 
 	int squareNumber;
 
+	//bool hasMewtwo;
 public:
 	Player();
 
@@ -20,6 +21,8 @@ public:
 	int GetY();
 
 	void SetDirection(char _direction);
+
+	bool IsInLeague(int width, int height);
 
 	char GetDir();
 

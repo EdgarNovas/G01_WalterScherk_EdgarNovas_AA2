@@ -2,32 +2,41 @@
 
 
 Player::Player() {
-	x = 10;
-	y = 10;
+	x = 0;
+	y = 0;
 	direction = '>';
 	capturedPokemon = 0;
-	pokeballs = 0;
+	pokeballs = 10;
+
+	//hasMewtwo = false;
 }
 
-void Player::SetPosition(int _x, int _y)
-{
+void Player::SetPosition(int _x, int _y) {
 	x = _x;
 	y = _y;
 }
 
-int Player::GetX()
-{
+int Player::GetX() {
 	return x;
 }
 
-int Player::GetY()
-{
+int Player::GetY() {
 	return y;
 }
 
-void Player::SetDirection(char _direction)
-{
+void Player::SetDirection(char _direction) {
 	direction = _direction;
+}
+
+bool Player::IsInLeague(int width, int height) {
+	if (y < width/2)
+	{
+		if (x > height / 2)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 char Player::GetDir() {
@@ -42,8 +51,7 @@ void Player::ChangeMyPlace(int i) {
 	squareNumber = i;
 }
 
-void Player::CapturePokemon()
-{
+void Player::CapturePokemon() {
 	pokeballs > 0 ?
 		capturedPokemon++,
 		pokeballs--
