@@ -6,7 +6,7 @@ const int dificultyMewtwo = 5;
 
 Pokemon::Pokemon() {
 	
-	name = allNames[rand() % maxNames];
+	
 
 	posX = 0;
 	posY = 0;
@@ -15,6 +15,7 @@ Pokemon::Pokemon() {
 
 	direction = 1;
 	nature = rand() % 3;
+	name = allNames[rand() % maxNames];
 
 	minX = 0;
 	minY = 0;
@@ -33,6 +34,10 @@ void Pokemon::SetPlace(int newSquareNumber) {
 std::string Pokemon::GetName() {
 
 	return name;
+}
+
+void Pokemon::SetMewtwoName() {
+	name = "Mewtwo";
 }
 
 int Pokemon::GetSquare() {

@@ -40,6 +40,7 @@ public:
     void SetTimeForNextMove(int min, int max);
 
     std::string GetName();
+    void SetMewtwoName();
 
     void SetPlace(int newSquareNumber);
     int GetSquare();
