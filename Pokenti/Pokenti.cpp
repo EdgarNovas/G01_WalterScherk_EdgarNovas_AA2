@@ -25,6 +25,8 @@ const int SQUARE1 = 1;
 const int SQUARE2 = 2;
 const int SQUARE3 = 3;
 
+const HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
 std::ifstream archivo("config.txt");
 int linesToRead = 0;
 
@@ -38,11 +40,11 @@ int main()
     GameStates state;
 
 
-    int currentPokemonIndex = 0;
+    gameSettings.currentPokemonIndex = 0;
 
 
-    int maxPokeballs = POKEBALL_IN_MAP;
-    Pokeball *pokeballs = new Pokeball[maxPokeballs];
+    gameSettings.maxPokeballs = POKEBALL_IN_MAP;
+    Pokeball *pokeballs = new Pokeball[gameSettings.maxPokeballs];
 
 
     std::string linea;
@@ -67,7 +69,7 @@ int main()
             else if (linesToRead == 3) // obtener el da�o de pikachu
                 CheckOneNumber(linea, gameSettings.pikachuDamage);
 
-            else if (linesToRead == 4) // obtener la vida de los pokemon salvages y la vida de MewTwo // 5;15
+            else if (linesToRead == 4) // obtener la vida de los pokemon salvages y la vida de MewTwo 
                 CheckNumbers(linea, gameSettings.pokemonMaxHealth, gameSettings.mewTwoHealht, leftNumber);
 
             else if (linesToRead == 5) // obtenener el m�nimo y m�ximo para que se muevan los pokemon
@@ -82,9 +84,9 @@ int main()
 
     archivo.close();
 
-    int allPokemonAround = gameSettings.pokemonAround1 + gameSettings.pokemonAround2 + 1;
+    gameSettings.allPokemonAround = gameSettings.pokemonAround1 + gameSettings.pokemonAround2 + 1;
 
-    Pokemon* pokemons = new Pokemon[allPokemonAround];
+    Pokemon* pokemons = new Pokemon[gameSettings.allPokemonAround];
 
     srand(time(NULL));
 
@@ -104,8 +106,6 @@ int main()
         case CurrentGameState::Init:
             std::cout << std::endl << std::endl << std::endl;
             std::cout << "      POKENTI" << std::endl;
-            std::cout << "      HECHO POR"<<std::endl;
-            std::cout << "  Walter Scherk i Edgar Novas"<<std::endl;
 
             for (int i = 0; i < gameSettings.height; i++)
             {
@@ -129,11 +129,11 @@ int main()
                 }
             }
 
-            for (int i = 0; i < maxPokeballs; i++) {
-                RandomizePokeball(pokeballs[i], maxPokeballs, i, gameSettings.width, gameSettings.height);
+            for (int i = 0; i < gameSettings.maxPokeballs; i++) {
+                RandomizePokeball(pokeballs[i], gameSettings.maxPokeballs, i, gameSettings.width, gameSettings.height);
             }
 
-            for (int i = 0; i < allPokemonAround; i++)
+            for (int i = 0; i < gameSettings.allPokemonAround; i++)
             {
                 pokemons[i].SetHealth(gameSettings.pokemonMaxHealth);
                 if (i < gameSettings.pokemonAround1)
@@ -158,11 +158,6 @@ int main()
             }
             me.SetPosition(0, 0);
 
-            int lowerX;
-            int higherX;
-            int lowerY;
-            int higherY;
-            HANDLE hConsole;
 
             Sleep(MILLIS_FOR_WAIT_FOR_INIT);
 
@@ -190,9 +185,9 @@ int main()
             if (gameSettings.fighting == true) {
                 if (GetAsyncKeyState(VK_SPACE)) {
                     if (me.GetPokeballs() > 0) {
-                        if (CheckIfPokemonIsCapturable(pokemons[currentPokemonIndex], gameSettings.pokemonMaxHealth, gameSettings.width, gameSettings.height, gameSettings.fighting) == true)
+                        if (CheckIfPokemonIsCapturable(pokemons[gameSettings.currentPokemonIndex], gameSettings.pokemonMaxHealth, gameSettings.width, gameSettings.height, gameSettings.fighting) == true)
                         {
-                            pokemons[currentPokemonIndex].IsMewtwoCaptured(gameSettings.hasMewtwo);
+                            pokemons[gameSettings.currentPokemonIndex].IsMewtwoCaptured(gameSettings.hasMewtwo);
                             gameSettings.fighting = false;
                             me.CapturePokemon();
                         }
@@ -210,7 +205,7 @@ int main()
                                 }
                             }
                         }
-                        else if (me.ShowCapturedPokemon() >= gameSettings.pokemonNeeded2) {
+                        else if (me.ShowCapturedPokemon() >= gameSettings.pokemonNeeded2 + gameSettings.pokemonNeeded1) {
                             for (int i = 0; i < gameSettings.height; i++)
                             {
                                 for (int j = 0; j < gameSettings.width; j++)
@@ -237,7 +232,7 @@ int main()
                 else if (GetAsyncKeyState(VK_SHIFT)) {
                     
                     if (me.GetX() > gameSettings.width / 2 && me.GetY() > gameSettings.height / 2 &&
-                        pokemons[currentPokemonIndex].GetHealth() - gameSettings.pikachuDamage <= 0) {
+                        pokemons[gameSettings.currentPokemonIndex].GetHealth() - gameSettings.pikachuDamage <= 0) {
                         for (int i = 0; i < gameSettings.height; i++)
                         {
                             for (int j = 0; j < gameSettings.width; j++)
@@ -249,14 +244,14 @@ int main()
                         }
                     }
                     
-                    DamagePokemon(pokemons[currentPokemonIndex], gameSettings.fighting, gameSettings.pikachuDamage, gameSettings.pokemonMaxHealth);
+                    DamagePokemon(pokemons[gameSettings.currentPokemonIndex], gameSettings.fighting, gameSettings.pikachuDamage, gameSettings.pokemonMaxHealth);
 
                 }
                 else if (GetAsyncKeyState(VK_BACK)) {
                     gameSettings.fighting = false;
 
                     if (me.GetX() > gameSettings.width / 2 && me.GetY() > gameSettings.height / 2) {
-                        pokemons[currentPokemonIndex].RandomizePokemon();
+                        pokemons[gameSettings.currentPokemonIndex].RandomizePokemon();
 
                         for (int i = 0; i < gameSettings.height; i++)
                         {
@@ -278,7 +273,7 @@ int main()
                 if (me.GetY() + 1 <= gameSettings.width - 1 && map[me.GetY() + 1][me.GetX()] == '-')
                     me.SetPosition(me.GetX(), me.GetY() + 1);
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.fighting, currentPokemonIndex);
+                FunctionThatStartsCombat(pokemons, gameSettings.allPokemonAround, me, gameSettings.fighting, gameSettings.currentPokemonIndex);
             }
             else if (GetAsyncKeyState(VK_LEFT)) {
 
@@ -288,12 +283,10 @@ int main()
                     me.SetPosition(me.GetX(), me.GetY() - 1);
 
                 if (me.IsInLeague(gameSettings.width, gameSettings.height)) {
-                    //if (gameSettings.hasMewtwo == false){
-                        state.ChangeCurrentState(CurrentGameState::GameOver);                        
-                    //}
+                    state.ChangeCurrentState(CurrentGameState::GameOver);                        
                 }
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.fighting, currentPokemonIndex);
+                FunctionThatStartsCombat(pokemons, gameSettings.allPokemonAround, me, gameSettings.fighting, gameSettings.currentPokemonIndex);
             }
             else if (GetAsyncKeyState(VK_DOWN)) {
 
@@ -302,7 +295,7 @@ int main()
                 if (me.GetX() + 1 <= gameSettings.height - 1 && map[me.GetY()][me.GetX() + 1] == '-')
                     me.SetPosition(me.GetX() + 1, me.GetY());
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.fighting, currentPokemonIndex);
+                FunctionThatStartsCombat(pokemons, gameSettings.allPokemonAround, me, gameSettings.fighting, gameSettings.currentPokemonIndex);
             }
             else if (GetAsyncKeyState(VK_UP)) {
 
@@ -311,17 +304,17 @@ int main()
                 if (me.GetX() - 1 >= 0 && map[me.GetY()][me.GetX() - 1] == '-')
                     me.SetPosition(me.GetX() - 1, me.GetY());
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.fighting, currentPokemonIndex);
+                FunctionThatStartsCombat(pokemons, gameSettings.allPokemonAround, me, gameSettings.fighting, gameSettings.currentPokemonIndex);
             }
 
 
 
-            for (int i = 0; i < maxPokeballs; i++) {
+            for (int i = 0; i < gameSettings.maxPokeballs; i++) {
                 if (me.GetX() == pokeballs[i].posX && me.GetY() == pokeballs[i].posY) {
                     me.IncreasePokeballs();
 
 
-                    RandomizePokeball(pokeballs[i], maxPokeballs, i, gameSettings.width, gameSettings.height);
+                    RandomizePokeball(pokeballs[i], gameSettings.maxPokeballs, i, gameSettings.width, gameSettings.height);
                 }
             }
 
@@ -329,7 +322,7 @@ int main()
 
             if (gameSettings.fighting == false)
             {
-                for (int i = 0; i < allPokemonAround; i++)
+                for (int i = 0; i < gameSettings.allPokemonAround; i++)
                 {
                     pokemons[i].Move();
                 }
@@ -337,34 +330,33 @@ int main()
 
 
 
-            lowerX = me.GetX() - 5;
-            higherX = me.GetX() + 5;
-            lowerY = me.GetY() - 5;
-            higherY = me.GetY() + 5;
+            gameSettings.lowerX = me.GetX() - 5;
+            gameSettings.higherX = me.GetX() + 5;
+            gameSettings.lowerY = me.GetY() - 5;
+            gameSettings.higherY = me.GetY() + 5;
 
-            lowerX < 0 ?
-                higherX += abs(lowerX), lowerX = 0
+            gameSettings.lowerX < 0 ?
+                gameSettings.higherX += abs(gameSettings.lowerX), gameSettings.lowerX = 0
                 :
                 0;
-            higherX > gameSettings.width ?
-                lowerX -= higherX - gameSettings.width, higherX = gameSettings.width
-                :
-                0;
-
-            lowerY < 0 ?
-                higherY += abs(lowerY), lowerY = 0
-                :
-                0;
-            higherY > gameSettings.height ?
-                lowerY -= higherY - gameSettings.height, higherY = gameSettings.height
+            gameSettings.higherX > gameSettings.width ?
+                gameSettings.lowerX -= gameSettings.higherX - gameSettings.width, gameSettings.higherX = gameSettings.width
                 :
                 0;
 
+            gameSettings.lowerY < 0 ?
+                gameSettings.higherY += abs(gameSettings.lowerY), gameSettings.lowerY = 0
+                :
+                0;
+            gameSettings.higherY > gameSettings.height ?
+                gameSettings.lowerY -= gameSettings.higherY - gameSettings.height, gameSettings.higherY = gameSettings.height
+                :
+                0;
 
 
-            hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
             SetConsoleTextAttribute(hConsole, 12);
-            std::cout << "Pok�mons capturados:";
+            std::cout << "Pokemons capturados:";
             SetConsoleTextAttribute(hConsole, 10);
             std::cout << me.ShowCapturedPokemon();
 
@@ -374,21 +366,21 @@ int main()
             std::cout << me.GetPokeballs() << std::endl;
 
             SetConsoleTextAttribute(hConsole, 7);
-            for (int i = lowerX; i < higherX; i++) {
+            for (int i = gameSettings.lowerX; i < gameSettings.higherX; i++) {
 
                 std::cout << "      ";
 
-                for (int j = lowerY; j < higherY; j++) {
+                for (int j = gameSettings.lowerY; j < gameSettings.higherY; j++) {
 
                     std::cout << ' ';
 
                     if (i == me.GetX() && j == me.GetY())
                         std::cout << me.GetDir();
-                    else if (PutPokemon(pokemons, allPokemonAround, i, j))
+                    else if (PutPokemon(pokemons, gameSettings.allPokemonAround, i, j))
                         std::cout << 'P';
-                    else if (i == pokemons[allPokemonAround - 1].GetPosX() && j == pokemons[allPokemonAround - 1].GetPosY())
+                    else if (i == pokemons[gameSettings.allPokemonAround - 1].GetPosX() && j == pokemons[gameSettings.allPokemonAround - 1].GetPosY())
                         std::cout << 'M';
-                    else if (PutPokeball(pokeballs, maxPokeballs, i, j))
+                    else if (PutPokeball(pokeballs, gameSettings.maxPokeballs, i, j))
                         std::cout << 'O';
                     else
                         std::cout << map[j][i];
@@ -398,7 +390,7 @@ int main()
             }
 
             if (gameSettings.fighting == true)
-                ShowCombatOptions(pokemons[currentPokemonIndex]);
+                ShowCombatOptions(pokemons[gameSettings.currentPokemonIndex]);
 
             CleanKeys();
             break;
@@ -409,7 +401,7 @@ int main()
 
             std::cout << std::endl << std::endl << std::endl << std::endl << std::endl;
             if (gameSettings.hasMewtwo == false)
-                std::cout << "You could not get Mewtwo...";
+                std::cout << "You could not get Mewtwo, you lost...";
             else
                 std::cout << "Along with Mewtwo and all your pokemon, you dominate the Pokenti league!";
             std::cout << std::endl << std::endl << std::endl << std::endl << std::endl;
@@ -566,17 +558,15 @@ void DamagePokemon(Pokemon& pokemon, bool& fighting, int damage, int maxHealth) 
 
 void ShowCombatOptions(Pokemon& pokemon) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, 12);
-    std::cout << pokemon.GetName() << "     ";
-
-    //SetConsoleTextAttribute(hConsole, 12);
-    std::cout << "nivel de salud ";
     SetConsoleTextAttribute(hConsole, 10);
-    std::cout << pokemon.GetHealth() << std::endl;
+    std::cout << std::endl;
+    std::cout << pokemon.GetName() << "         " << "salud: " << pokemon.GetHealth();
+    std::cout << std::endl << std::endl;
+
     SetConsoleTextAttribute(hConsole, 12);
-    std::cout << "              atacar(Shift Derecho)" << std::endl;
-    std::cout << "              capturar(Espacio)" << std::endl;
-    std::cout << "              huir(Retroceso)" << std::endl;
+    std::cout << "      atacar(Shift Derecho)" << std::endl;
+    std::cout << "      capturar(Espacio)" << std::endl;
+    std::cout << "      huir(Retroceso)" << std::endl;
 
     SetConsoleTextAttribute(hConsole, 7);
 }
@@ -585,7 +575,6 @@ void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, boo
 
     for (int _i = 0; _i < allPokemons; _i++)
     {
-        //if (me.GetMyPlace() == pokemons[_i].GetSquare()) {
         for (int i = POKE_COMBAT_AREA_MIN; i < POKE_COMBAT_AREA_MAX; i++)
         {
             for (int j = POKE_COMBAT_AREA_MIN; j < POKE_COMBAT_AREA_MAX; j++)
@@ -597,7 +586,6 @@ void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, boo
                 }
             }
         }
-        //}
     }
 }
 

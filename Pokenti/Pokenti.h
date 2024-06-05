@@ -13,7 +13,3 @@ void DamagePokemon(Pokemon& pokemon, bool& fighting, int damage, int maxHealth);
 void ShowCombatOptions(Pokemon& pokemon);
 void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, bool& fighting, int& currentPokemonNum);
 
-
-//1 pokeballs como clase
-//2 Resumir funciones y bucles
-//3 cambiar el map de carácteres por uno de ¿structs?

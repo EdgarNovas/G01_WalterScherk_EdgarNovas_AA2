@@ -10,7 +10,6 @@ private:
 
 	int squareNumber;
 
-	//bool hasMewtwo;
 public:
 	Player();
 
