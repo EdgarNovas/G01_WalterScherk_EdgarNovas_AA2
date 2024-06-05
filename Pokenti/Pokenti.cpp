@@ -575,7 +575,7 @@ void DamagePokemon(Pokemon& pokemon, bool& fighting, int damage, int maxHealth) 
 void ShowCombatOptions(Pokemon& pokemon) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, 12);
-    //std::cout << pokemon.GetName() << "     ";
+    std::cout << pokemon.GetName() << "     ";
 
     //SetConsoleTextAttribute(hConsole, 12);
     std::cout << "nivel de salud ";
