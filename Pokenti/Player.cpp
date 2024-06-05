@@ -1,36 +1,82 @@
 #include "Player.h"
 
 
-void Player::SetPosition(int _x, int _y)
-{
-	this->x = _x;
-	this->y = _y;
+Player::Player() {
+	x = 0;
+	y = 0;
+	direction = '>';
+	capturedPokemon = 0;
+	pokeballs = 10;
+
+	//hasMewtwo = false;
 }
 
-int Player::GetX()
-{
-	return this->x;
+void Player::SetPosition(int _x, int _y) {
+	x = _x;
+	y = _y;
 }
 
-int Player::GetY()
-{
-	return this->y;
+int Player::GetX() {
+	return x;
 }
 
-void Player::SetDirection(char direction)
-{
-	this->direction = direction;
+int Player::GetY() {
+	return y;
+}
+
+void Player::SetDirection(char _direction) {
+	direction = _direction;
+}
+
+bool Player::IsInLeague(int width, int height) {
+	if (y < width/2)
+	{
+		if (x > height / 2)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 char Player::GetDir() {
-	return this->direction;
+	return direction;
 }
 
-void Player::CapturePokemon(int a)
+int Player::GetMyPlace() {
+	return squareNumber;
+}
+
+void Player::ChangeMyPlace(int i) {
+	squareNumber = i;
+}
+
+void Player::CapturePokemon() {
+	pokeballs > 0 ?
+		capturedPokemon++,
+		pokeballs--
+		:
+		0;
+}
+
+void Player::DamagePokemon() {
+
+}
+
+void Player::IncreasePokeballs() {
+	pokeballs++;
+}
+
+void Player::DecreasePokeballs()
 {
-	capturedPokemon += a;
+	if (pokeballs > 0)
+		pokeballs--;
+}
+
+int Player::GetPokeballs() {
+	return pokeballs;
 }
 
 int Player::ShowCapturedPokemon() {
-	return this->capturedPokemon;
+	return capturedPokemon;
 }

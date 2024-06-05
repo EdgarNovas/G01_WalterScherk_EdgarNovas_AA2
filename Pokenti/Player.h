@@ -2,25 +2,42 @@
 class Player
 {
 private:
-	int x = 0;
-	int y = 0;
-	char direction = '>';
-	int capturedPokemon = 0;
+	int x;
+	int y;
+	char direction;
+	int capturedPokemon;
+	int pokeballs;
 
+	int squareNumber;
+
+	//bool hasMewtwo;
 public:
+	Player();
+
 	void SetPosition(int _x, int _y);
 
 	int GetX();
 	
 	int GetY();
 
-	void SetDirection(char direction);
+	void SetDirection(char _direction);
+
+	bool IsInLeague(int width, int height);
 
 	char GetDir();
 
-	void CapturePokemon(int a);
+	int GetMyPlace();
+	void ChangeMyPlace(int i);
+
+	void CapturePokemon();
+
+	void IncreasePokeballs();
+	void DecreasePokeballs();
+	int GetPokeballs();
 
 	int ShowCapturedPokemon();
+
+	void DamagePokemon();
 
 
 };
