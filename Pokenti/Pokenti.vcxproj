@@ -136,6 +136,7 @@
     <ClInclude Include="GameStates.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Pokemon.h" />
+    <ClInclude Include="Pokenti.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
