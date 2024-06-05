@@ -79,13 +79,13 @@ int main()
             else if (linesToRead == 2) // obtener el numero de los pokemon de la segunda zona
                 CheckNumbers(linea, pokemonAround2, pokemonNeeded2, leftNumber);
 
-            else if (linesToRead == 3) // obtener el daño de pikachu
+            else if (linesToRead == 3) // obtener el daï¿½o de pikachu
                 CheckOneNumber(linea, pikachuDamage);
 
             else if (linesToRead == 4) // obtener la vida de los pokemon salvages y la vida de MewTwo // 5;15
                 CheckNumbers(linea, pokemonMaxHealth, mewTwoHealht, leftNumber);
 
-            else if (linesToRead == 5) // obtenener el mínimo y máximo para que se muevan los pokemon
+            else if (linesToRead == 5) // obtenener el mï¿½nimo y mï¿½ximo para que se muevan los pokemon
                 CheckNumbers(linea, minWaitTurns, maxWaitTurns, leftNumber);
 
             linesToRead++;
@@ -377,7 +377,7 @@ int main()
 
             hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
             SetConsoleTextAttribute(hConsole, 12);
-            std::cout << "Pokémons capturados:";
+            std::cout << "Pokï¿½mons capturados:";
             SetConsoleTextAttribute(hConsole, 10);
             std::cout << me.ShowCapturedPokemon() << '/' << pokemonNeeded1;
 
