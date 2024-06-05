@@ -127,12 +127,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="GameStates.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Pokemon.cpp" />
     <ClCompile Include="Pokenti.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameSettings.h" />
     <ClInclude Include="GameStates.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Pokemon.h" />

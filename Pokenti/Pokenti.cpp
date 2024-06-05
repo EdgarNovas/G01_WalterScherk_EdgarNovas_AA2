@@ -7,6 +7,7 @@
 #include "GameStates.h"
 #include "Pokemon.h"
 #include "Pokenti.h"
+#include "GameSettings.h"
 
 const int MAX_MAP = 3;
 const int CHAR_NUM_TO_NUM = 48;
@@ -25,37 +26,17 @@ const int SQUARE3 = 3;
 std::ifstream archivo("config.txt");
 int linesToRead = 0;
 
-struct Settings {
-
-    int w_idth = 0;
-    int h_eight = 0;
-    int p_ikachuDamage = 0;
-    int p_okemonMaxHealth = 0;
-    int m_ewTwoHealht = 0;
-    int m_inWaitTurns = 0;
-    int m_axWaitTurns = 0;
-
-    int p_okemonAround1 = 0;
-    int p_okemonNeeded1 = 0;
-    int p_okemonAround2 = 0;
-    int p_okemonNeeded2 = 0;
-
-    bool f_ighting = false;
-    bool h_asMewtwo = false;
-};
 
 int main()
 {
-    Settings gameSettings;
+    GameSettings gameSettings;
 
     Player me;
     char** map;
     GameStates state;
-    bool fighting = false;
 
-    bool hasMewtwo = false;
 
-    int currentPokemonNum = 0;
+    int currentPokemonIndex = 0;
 
 
     int maxPokeballs = 12;
@@ -65,12 +46,6 @@ int main()
     std::string linea;
     
     
-    bool gameOver = false;
-
-
-
-
-
     //READ DOCUMENT
     if (archivo.is_open()) {
 
@@ -120,7 +95,7 @@ int main()
         map[i] = new char[gameSettings.w_idth];
     }
 
-    while (!GetAsyncKeyState(VK_ESCAPE) && !gameOver) {
+    while (!GetAsyncKeyState(VK_ESCAPE) && !gameSettings.g_ameOver) {
 
         switch (state.ReturnGameState())
         {
@@ -210,19 +185,19 @@ int main()
 
         case CurrentGameState::Game:
             system("cls");
-            if (fighting == true) {
+            if (gameSettings.f_ighting == true) {
                 if (GetAsyncKeyState(VK_SPACE)) {
                     if (me.GetPokeballs() > 0) {
-                        if (CheckIfPokemonIsCapturable(pokemons[currentPokemonNum], gameSettings.p_okemonMaxHealth, gameSettings.w_idth, gameSettings.h_eight, fighting) == true)
+                        if (CheckIfPokemonIsCapturable(pokemons[currentPokemonIndex], gameSettings.p_okemonMaxHealth, gameSettings.w_idth, gameSettings.h_eight, gameSettings.f_ighting) == true)
                         {
-                            pokemons[currentPokemonNum].IsMewtwoCaptured(hasMewtwo);
-                            fighting = false;
+                            pokemons[currentPokemonIndex].IsMewtwoCaptured(gameSettings.h_asMewtwo);
+                            gameSettings.f_ighting = false;
                             me.CapturePokemon();
                         }
                         else
                             me.DecreasePokeballs();
 
-                        if (me.GetX() > gameSettings.w_idth / 2 && me.GetY() > gameSettings.h_eight / 2 && fighting == false) {
+                        if (me.GetX() > gameSettings.w_idth / 2 && me.GetY() > gameSettings.h_eight / 2 && gameSettings.f_ighting == false) {
                             for (int i = 0; i < gameSettings.h_eight; i++)
                             {
                                 for (int j = 0; j < gameSettings.w_idth; j++)
@@ -260,7 +235,7 @@ int main()
                 else if (GetAsyncKeyState(VK_SHIFT)) {
                     
                     if (me.GetX() > gameSettings.w_idth / 2 && me.GetY() > gameSettings.h_eight / 2 &&
-                        pokemons[currentPokemonNum].GetHealth() - gameSettings.p_ikachuDamage <= 0) {
+                        pokemons[currentPokemonIndex].GetHealth() - gameSettings.p_ikachuDamage <= 0) {
                         for (int i = 0; i < gameSettings.h_eight; i++)
                         {
                             for (int j = 0; j < gameSettings.w_idth; j++)
@@ -272,14 +247,14 @@ int main()
                         }
                     }
                     
-                    DamagePokemon(pokemons[currentPokemonNum], fighting, gameSettings.p_ikachuDamage, gameSettings.p_okemonMaxHealth);
+                    DamagePokemon(pokemons[currentPokemonIndex], gameSettings.f_ighting, gameSettings.p_ikachuDamage, gameSettings.p_okemonMaxHealth);
 
                 }
                 else if (GetAsyncKeyState(VK_BACK)) {
-                    fighting = false;
+                    gameSettings.f_ighting = false;
 
                     if (me.GetX() > gameSettings.w_idth / 2 && me.GetY() > gameSettings.h_eight / 2) {
-                        pokemons[currentPokemonNum].RandomizePokemon();
+                        pokemons[currentPokemonIndex].RandomizePokemon();
 
                         for (int i = 0; i < gameSettings.h_eight; i++)
                         {
@@ -301,7 +276,7 @@ int main()
                 if (me.GetY() + 1 <= gameSettings.w_idth - 1 && map[me.GetY() + 1][me.GetX()] == '-')
                     me.SetPosition(me.GetX(), me.GetY() + 1);
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
+                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.f_ighting, currentPokemonIndex);
             }
             else if (GetAsyncKeyState(VK_LEFT)) {
 
@@ -311,12 +286,12 @@ int main()
                     me.SetPosition(me.GetX(), me.GetY() - 1);
 
                 if (me.IsInLeague(gameSettings.w_idth, gameSettings.h_eight)) {
-                    //if (hasMewtwo == false){
+                    //if (gameSettings.h_asMewtwo == false){
                         state.ChangeCurrentState(CurrentGameState::GameOver);                        
                     //}
                 }
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
+                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.f_ighting, currentPokemonIndex);
             }
             else if (GetAsyncKeyState(VK_DOWN)) {
 
@@ -325,7 +300,7 @@ int main()
                 if (me.GetX() + 1 <= gameSettings.h_eight - 1 && map[me.GetY()][me.GetX() + 1] == '-')
                     me.SetPosition(me.GetX() + 1, me.GetY());
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
+                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.f_ighting, currentPokemonIndex);
             }
             else if (GetAsyncKeyState(VK_UP)) {
 
@@ -334,7 +309,7 @@ int main()
                 if (me.GetX() - 1 >= 0 && map[me.GetY()][me.GetX() - 1] == '-')
                     me.SetPosition(me.GetX() - 1, me.GetY());
 
-                FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
+                FunctionThatStartsCombat(pokemons, allPokemonAround, me, gameSettings.f_ighting, currentPokemonIndex);
             }
 
 
@@ -350,7 +325,7 @@ int main()
 
 
 
-            if (fighting == false)
+            if (gameSettings.f_ighting == false)
             {
                 for (int i = 0; i < allPokemonAround; i++)
                 {
@@ -420,8 +395,8 @@ int main()
                 std::cout << std::endl;
             }
 
-            if (fighting == true)
-                ShowCombatOptions(pokemons[currentPokemonNum]);
+            if (gameSettings.f_ighting == true)
+                ShowCombatOptions(pokemons[currentPokemonIndex]);
 
             CleanKeys();
             break;
@@ -431,7 +406,7 @@ int main()
             system("cls");
 
             std::cout << std::endl << std::endl << std::endl << std::endl << std::endl;
-            if (hasMewtwo == false)
+            if (gameSettings.h_asMewtwo == false)
                 std::cout << "You could not get Mewtwo...";
             else
                 std::cout << "Along with Mewtwo and all your pokemon, you dominate the Pokenti league!";
@@ -440,7 +415,7 @@ int main()
             Sleep(MILLIS_FOR_WAIT_FOR_GAMEOVER);
             CleanKeys();
 
-            gameOver = true;
+            gameSettings.g_ameOver = true;
 
             break;
 
