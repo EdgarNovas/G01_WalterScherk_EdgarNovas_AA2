@@ -1,20 +1,20 @@
 #include "GameSettings.h"
 
 GameSettings::GameSettings() {
-	w_idth = 0;
-	h_eight = 0;
-	p_ikachuDamage = 0;
-	p_okemonMaxHealth = 0;
-	m_ewTwoHealht = 0;
-	m_inWaitTurns = 0;
-	m_axWaitTurns = 0;
+	width = 0;
+	height = 0;
+	pikachuDamage = 0;
+	pokemonMaxHealth = 0;
+	mewTwoHealht = 0;
+	minWaitTurns = 0;
+	maxWaitTurns = 0;
 
-	p_okemonAround1 = 0;
-	p_okemonNeeded1 = 0;
-	p_okemonAround2 = 0;
-	p_okemonNeeded2 = 0;
+	pokemonAround1 = 0;
+	pokemonNeeded1 = 0;
+	pokemonAround2 = 0;
+	pokemonNeeded2 = 0;
 
-	f_ighting = false;
-	h_asMewtwo = false;
-	g_ameOver = false;
+	fighting = false;
+	hasMewtwo = false;
+	gameOver = false;
 }

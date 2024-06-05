@@ -6,9 +6,8 @@ Player::Player() {
 	y = 0;
 	direction = '>';
 	capturedPokemon = 0;
-	pokeballs = 10;
+	pokeballs = 0;
 
-	//hasMewtwo = false;
 }
 
 void Player::SetPosition(int _x, int _y) {

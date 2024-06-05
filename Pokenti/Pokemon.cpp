@@ -93,7 +93,7 @@ void Pokemon::DefineMinsAndMaxs(int width, int height) {
 		minY = (height / 2) + 1;
 
 		maxX = (width / 2) - 1;
-		maxY = height;
+		maxY = height - 1;
 	}
 }
 
@@ -120,7 +120,7 @@ void Pokemon::Move() {
 			break;
 
 		case 2:
-			if ((posX + direction < minX || posX + direction > maxX) || (posY + direction < minY || posY + direction > maxY))
+			if (posX + direction < minX || posX + direction > maxX || posY + direction < minY || posY + direction > maxY)
 				direction *= -1;
 
 			posX += direction;
@@ -146,8 +146,8 @@ void Pokemon::SetTimeForNextMove(int min, int max) {
 void Pokemon::RandomizePokemon() {
 	if (squareNumber <= 1)
 	{
-		posX = (rand() % maxX) + minX;
-		posY = (rand() % maxY) + minY;
+		posX = (rand() % (maxX - minX)) + minX;
+		posY = (rand() % (maxY - minY)) + minY;
 	}
 	else {
 		posX = -10;

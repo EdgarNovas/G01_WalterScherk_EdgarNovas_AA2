@@ -4,22 +4,22 @@ class GameSettings
     
 
 public:
-    int w_idth;
-    int h_eight;
-    int p_ikachuDamage;
-    int p_okemonMaxHealth;
-    int m_ewTwoHealht;
-    int m_inWaitTurns;
-    int m_axWaitTurns;
+    int width;
+    int height;
+    int pikachuDamage;
+    int pokemonMaxHealth;
+    int mewTwoHealht;
+    int minWaitTurns;
+    int maxWaitTurns;
 
-    int p_okemonAround1;
-    int p_okemonNeeded1;
-    int p_okemonAround2;
-    int p_okemonNeeded2;
+    int pokemonAround1;
+    int pokemonNeeded1;
+    int pokemonAround2;
+    int pokemonNeeded2;
 
-    bool f_ighting;
-    bool h_asMewtwo;
-    bool g_ameOver;
+    bool fighting;
+    bool hasMewtwo;
+    bool gameOver;
 
 
     GameSettings();
