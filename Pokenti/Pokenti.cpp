@@ -161,9 +161,9 @@ void ShowCombatOptions(Pokemon& pokemon) {
     SetConsoleTextAttribute(hConsole, 10);
     std::cout << pokemon.GetHealth() << std::endl;
     SetConsoleTextAttribute(hConsole, 12);
-    std::cout << "              atacar" << std::endl;
-    std::cout << "              capturar" << std::endl;
-    std::cout << "              huir" << std::endl;
+    std::cout << "              atacar(Shift Derecho)" << std::endl;
+    std::cout << "              capturar(Espacio)" << std::endl;
+    std::cout << "              huir(Retroceso)" << std::endl;
 
     SetConsoleTextAttribute(hConsole, 7);
 }
@@ -280,7 +280,9 @@ int main()
         {
         case CurrentGameState::Init:
             std::cout << std::endl << std::endl << std::endl;
-            std::cout << "      POKENTI";
+            std::cout << "      POKENTI" << std::endl;
+            std::cout << "      HECHO POR"<<std::endl;
+            std::cout << "  Walter Scherk i Edgar Novas"<<std::endl;
 
             for (int i = 0; i < height; i++)
             {
@@ -595,10 +597,18 @@ int main()
 
         Sleep(MILLIS_FOR_NEXT_FRAME);
     }
-    
+    //END MAIN
+
+
+
+
+
     for (int i = 0; i < height; i++) {
         delete [] map[i];
     }
 
     delete[] map;
 }
+
+
+
