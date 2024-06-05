@@ -15,18 +15,11 @@ private:
 	CurrentGameState currentState;
 public:
 
-	GameStates() {
-		currentState = CurrentGameState::Init;
-	}
+	GameStates();
 
-	void ChangeCurrentState(CurrentGameState state) {
+	void ChangeCurrentState(CurrentGameState state);
 
-		currentState = state;
-	}
-
-	CurrentGameState ReturnGameState() {
-		return currentState;
-	}
+	CurrentGameState ReturnGameState();
 
 };
 
