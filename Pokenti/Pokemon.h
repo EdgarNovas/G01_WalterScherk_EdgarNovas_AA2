@@ -1,6 +1,13 @@
 #pragma once
+#include <iostream>
 class Pokemon
 {
+    static const int maxNames = 5;
+
+    std::string allNames[maxNames] {"Squirtle", "Starly", "Geodude", "Ghastly", "Rapidash"};
+
+    std::string name;
+
     int posX;
     int posY;
     int health;
@@ -31,6 +38,8 @@ public:
     void DefineMinsAndMaxs(int width, int height);
     void Move();
     void SetTimeForNextMove(int min, int max);
+
+    std::string GetName();
 
     void SetPlace(int newSquareNumber);
     int GetSquare();
