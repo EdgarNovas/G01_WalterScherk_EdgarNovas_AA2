@@ -1,22 +1,27 @@
 #pragma once
 class GameSettings
 {
+    
+
 public:
-    int w_idth = 0;
-    int h_eight = 0;
-    int p_ikachuDamage = 0;
-    int p_okemonMaxHealth = 0;
-    int m_ewTwoHealht = 0;
-    int m_inWaitTurns = 0;
-    int m_axWaitTurns = 0;
+    int w_idth;
+    int h_eight;
+    int p_ikachuDamage;
+    int p_okemonMaxHealth;
+    int m_ewTwoHealht;
+    int m_inWaitTurns;
+    int m_axWaitTurns;
 
-    int p_okemonAround1 = 0;
-    int p_okemonNeeded1 = 0;
-    int p_okemonAround2 = 0;
-    int p_okemonNeeded2 = 0;
+    int p_okemonAround1;
+    int p_okemonNeeded1;
+    int p_okemonAround2;
+    int p_okemonNeeded2;
 
-    bool f_ighting = false;
-    bool h_asMewtwo = false;
-    bool g_ameOver = false;
+    bool f_ighting;
+    bool h_asMewtwo;
+    bool g_ameOver;
+
+
+    GameSettings();
 };
 

@@ -1,11 +1,5 @@
 #pragma once
-
-struct Pokeball {
-    int posX = 2;
-    int posY = 2;
-
-    int square = 0;
-};
+#include "Pokeball.h"
 
 
 void CleanKeys();
@@ -20,4 +14,6 @@ void ShowCombatOptions(Pokemon& pokemon);
 void FunctionThatStartsCombat(Pokemon* pokemons, int allPokemons, Player me, bool& fighting, int& currentPokemonNum);
 
 
-
+//1 pokeballs como clase
+//2 Resumir funciones y bucles
+//3 cambiar el map de carácteres por uno de ¿structs?

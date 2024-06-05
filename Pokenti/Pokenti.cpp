@@ -8,6 +8,7 @@
 #include "Pokemon.h"
 #include "Pokenti.h"
 #include "GameSettings.h"
+#include "Pokeball.h"
 
 const int MAX_MAP = 3;
 const int CHAR_NUM_TO_NUM = 48;

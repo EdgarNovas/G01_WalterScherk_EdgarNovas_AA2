@@ -130,6 +130,7 @@
     <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="GameStates.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Pokeball.cpp" />
     <ClCompile Include="Pokemon.cpp" />
     <ClCompile Include="Pokenti.cpp" />
   </ItemGroup>
@@ -137,6 +138,7 @@
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="GameStates.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Pokeball.h" />
     <ClInclude Include="Pokemon.h" />
     <ClInclude Include="Pokenti.h" />
   </ItemGroup>
