@@ -462,8 +462,11 @@ int main()
                 if (me.GetY() - 1 >= 0 && map[me.GetY() - 1][me.GetX()] == '-')
                     me.SetPosition(me.GetX(), me.GetY() - 1);
 
-                if(me.IsInLeague(width, height))
-                    state.ChangeCurrentState(CurrentGameState::GameOver);
+                if (me.IsInLeague(width, height)) {
+                    if (hasMewtwo == false){
+                        state.ChangeCurrentState(CurrentGameState::GameOver);                        
+                    }
+                }
 
                 FunctionThatStartsCombat(pokemons, allPokemonAround, me, fighting, currentPokemonNum);
             }
