@@ -26,7 +26,6 @@ std::ifstream archivo("config.txt");
 int linesToRead = 0;
 
 
-
 int main()
 {
     Player me;
@@ -213,7 +212,7 @@ int main()
                         else
                             me.DecreasePokeballs();
 
-                        if (me.GetX() > width / 2 && me.GetY() > height / 2) {
+                        if (me.GetX() > width / 2 && me.GetY() > height / 2 && fighting == false) {
                             for (int i = 0; i < height; i++)
                             {
                                 for (int j = 0; j < width; j++)
@@ -576,7 +575,7 @@ void DamagePokemon(Pokemon& pokemon, bool& fighting, int damage, int maxHealth) 
 void ShowCombatOptions(Pokemon& pokemon) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, 12);
-    std::cout << "nombre de enemigo     ";
+    //std::cout << pokemon.GetName() << "     ";
 
     //SetConsoleTextAttribute(hConsole, 12);
     std::cout << "nivel de salud ";
